@@ -1,4 +1,4 @@
-# NanoTrack: Nano-Size Analytics
+# 📊 NanoTrack: Nano-Size Spy-Pixel Analytics
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![Docker Pulls](https://img.shields.io/docker/pulls/nanotrack)
@@ -50,14 +50,14 @@ NanoTrack is currently in an **early-release beta** phase. This is an exciting s
 I'm excited to have you aboard during this pivotal phase of NanoTrack's development and look forward to growing together!
 
 ## 📖 Table of Contents
-- [NanoTrack: Nano-Size Analytics](#nanotrack-nano-size-analytics)
+- [📊 NanoTrack: Nano-Size Spy-Pixel Analytics](#-nanotrack-nano-size-spy-pixel-analytics)
   - [🌟 Introduction](#-introduction)
   - [🌄 Background](#-background)
   - [⚠️ Limitations of Pixel Tracking](#️-limitations-of-pixel-tracking)
     - [Caching Challenges](#caching-challenges)
     - [Comparison with Standard Analytics](#comparison-with-standard-analytics)
     - [Ideal Use Cases](#ideal-use-cases)
-  - [� Early-Release Beta Status](#-early-release-beta-status)
+  - [🚧 Early-Release Beta Status](#-early-release-beta-status)
     - [Current Phase](#current-phase)
     - [Expect Continuous Improvements](#expect-continuous-improvements)
     - [Your Feedback Matters](#your-feedback-matters)
@@ -159,7 +159,7 @@ Track email opens by embedding a tracking URL in the email. For instance, to tra
 ### Event Tracking
 Monitor specific user actions or events on your application. For instance, to track `user registrations`, you can embed a URL like this:
 
-> http://**[your_server_ip]**/track/**register**.gif?campaignID=**my_awesome_app-user-registration**
+> http://**[your_server_ip]**/track/**user-registration**.gif?campaignID=**my-awesome-app**
 
 This example would track whenever a user accesses the registration page, helping you understand user interest in signing up for your service.
 
