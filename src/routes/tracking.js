@@ -62,6 +62,23 @@ module.exports = function (wss) {
         }
     });
 
+    router.get('/api/campaign/:campaignId', isAuthenticated, async (req, res) => {
+        try {
+            const campaignId = req.params.campaignId;
+            // Fetch data related to the campaign
+            const campaignData = await TrackingData.find({ campaignID: campaignId });
+            
+            if (!campaignData || campaignData.length <=0) {
+                return res.status(404).json({ message: "Campaign not found" });
+            }
+    
+            res.json(campaignData);
+        } catch (err) {
+            console.error('Error fetching campaign data:', err);
+            res.status(500).send('Server Error');
+        }
+    });
+
     // DELETE endpoint for removing a specific campaign
     router.delete('/api/campaign/:campaignID', isAuthenticated, async (req, res) => {
         const { campaignID } = req.params;

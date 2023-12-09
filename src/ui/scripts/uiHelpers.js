@@ -19,9 +19,9 @@ function populateTable(data) {
             const rowClass = index % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200';
 
             let row = `<tr class="${rowClass}">
-                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300 capitalize" onclick="applyFilter(this)">🎯 ${item.campaignID.replaceAll('-',' ').replaceAll('_',' ')}</td>
+                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${item.campaignID}</td>
                     <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${eventFromPath(item.path) || ''}</td>
-                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${item.referer || '👀 direct'}</td>
+                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${item.referer || 'direct'}</td>
                     <td  class="px-4 py-2  whitespace-nowrap">${item.geo?.ip.replace('::ffff:','').replace('::1','localhost') || ''}</td>
                     <td  class="px-4 py-2  whitespace-nowrap">${getBrowserIcon(item.useragent?.browser)} ${item.useragent?.browser || ''} ${item.useragent?.version || ''}</td>
                     <td  class="px-4 py-2  whitespace-nowrap capitalize">${getDeviceIcon(item.useragent?.device)} ${item.useragent?.device || ''}</td>

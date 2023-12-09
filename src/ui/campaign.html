@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NanoTrack - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css" />
+    <style>
+        .custom-bg {
+            background-color: #3C318D;
+        }
+
+        .row {
+            display: flex;
+            width: 100%;
+            /* Spacing between rows */
+        }
+
+        .row:not(:last-of-type) {
+            margin-bottom: 20px;
+        }
+
+        .col {
+            /* Border for each container */
+            margin: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: flex-start;
+        }
+
+        .col-6 {
+            width: 50%;
+        }
+
+        .col-4,
+        .col-8 {
+            flex: 1;
+            /* This ensures that the columns in the same row are of equal height */
+        }
+
+        /* Optional: Adding some more styling for better visuals */
+        .col {
+            {{/*  background-color: #f9f9f9;  */}}
+            /* Light background for the containers */
+            {{/*  border-radius: 5px;  */}}
+            /* rounded-lg corners */
+            {{/*  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  */}}
+            /* subtle shadow for depth */
+        }
+
+        /* Styling for the list items */
+        .col div {
+            margin-bottom: 10px;
+            /* Spacing between items */
+        }
+
+        .data-table {
+            width: 100%;
+            /* Full width */
+            border-collapse:separate; 
+            border-spacing: 0 .25em;
+        }
+
+        .data-table th,
+        .data-table td {
+            /* Border for cells */
+            padding: 4px 8px;
+            /* Padding inside cells */
+            text-align: left;
+            /* Align text to the left */
+        }
+
+        .data-table th {
+            /* Light background for headers */
+        }
+    </style>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <script src="/scripts/navigation.js"></script>
+    <script src="/scripts/websocket.js"></script>
+    <script src="/scripts/uiHelpers.js"></script>
+    <script src="/scripts/dataProcessing.js"></script>
+    <script src="/scripts/charts.js"></script>
+    <script src="/scripts/filters.js"></script>
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <div class="custom-bg py-4">
+        <div class="container mx-auto text-center text-white">
+            <div id="header"></div>
+        </div>
+    </div>
+    <div class="flex-grow container mx-auto py-8 text-sm px-5">
+        <a href="/campaigns" class="test-lg font-medium mb-4 block"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back To Campaigns</a>
+        <div class="card bg-white p-4 rounded-lg border">
+            <h1 class="text-3xl font-bold capitalize mb-6" id="title">Campaign</h1>
+
+            <div id="campaignDetails">
+                <div class="row">
+                    <div class="col col-6" id="pathList"></div>
+                    <div class="col col-6" id="referrerList"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col col-4" id="browserList"></div>
+                    <div class="col col-4" id="osList"></div>
+                    <div class="col col-4" id="deviceList"></div>
+                </div>
+
+                <!-- <div class="row">
+                    <div class="col col-8" id="thirdRowFirstContainer"></div>
+                    <div class="col col-4" id="thirdRowSecondContainer"></div>
+                </div> -->
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="custom-bg py-4">
+        <div class="container mx-auto text-center text-white text-sm">
+            <div id="footer"></div>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        // Extract campaignId from the URL path
+        const pathParts = window.location.pathname.split('/');
+        const campaignId = pathParts[pathParts.length - 1]; // Assuming campaignId is the last part of the URL
+
+
+        const title = document.getElementById('title');
+        title.innerHTML = '🎯 ' + campaignId.replaceAll('-', ' ').replaceAll('_', ' ');
+
+
+        if (campaignId) {
+            fetch(`/track/api/campaign/${campaignId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Campaign Data:', data);  // Check the fetched data
+                    displayCampaignData(data);
+                })
+                .catch(error => console.error('Error fetching campaign data:', error));
+
+        }
+
+        function displayCampaignData(data) {
+            // Grouping data
+            const pathCounts = groupData(data, 'path');
+            const referrerCounts = groupData(data, 'referer');
+            const deviceCounts = groupData(data, 'device');
+            const browserCounts = groupData(data, 'browser');
+            const osCounts = groupData(data, 'os');
+
+            // Populate containers
+            populateList('pathList', pathCounts, 'Events', 'Views');
+            populateList('referrerList', referrerCounts, 'Referrers', 'Views');
+            populateList('browserList', groupData(data, 'useragent.browser'), 'Browsers', 'Views', 'browser');
+            populateList('deviceList', groupData(data, 'useragent.device'), 'Devices', 'Views', 'device');
+            populateList('osList', groupData(data, 'useragent.os'), 'Operating Systems', 'Views', 'os');
+
+
+
+            // Additional logic for third row...
+        }
+
+        function groupData(data, key) {
+            const counts = {};
+            data.forEach(item => {
+                let value = item[key];
+
+                if (key.includes('.')) {
+                    // Handle nested properties
+                    const keys = key.split('.');
+                    value = item[keys[0]] ? item[keys[0]][keys[1]] : null;
+                } else {
+                    value = item[key];
+                }
+
+                // Combine 'osx' and 'OS X El Capitan' into one group
+                if (key === 'useragent.os') {
+                    if (value.toLowerCase() === 'osx' || value.toLowerCase() === 'os x el capitan') {
+                        value = 'OS X';
+                    }
+                }
+
+                // If the referrer is null/undefined, set it to 'direct'
+                if (key === 'referer' && !value) {
+                    value = 'direct';
+                }
+
+                if (key === 'path') {
+                    value = value.replaceAll('.gif', '').replaceAll('/', '');
+                }
+
+                value = value || 'Unknown'; // Fallback for other null/undefined values
+                counts[value] = (counts[value] || 0) + 1;
+            });
+            return counts;
+        }
+
+
+        function populateList(containerId, counts, header1, header2, dataType) {
+            const container = document.getElementById(containerId);
+
+            // Calculate total count
+            const totalCount = Object.values(counts).reduce((acc, count) => acc + count, 0);
+
+            let tableContent = `<table class="data-table"><thead><tr><th>${header1}</th><th>${header2}</th></tr></thead><tbody>`;
+
+            for (const [key, value] of Object.entries(counts)) {
+                const percentage = Math.floor(((value / totalCount) * 100).toFixed(2)); // Calculate percentage
+                let iconHtml = '';
+
+                // Get the appropriate icon based on the dataType
+                switch (dataType) {
+                    case 'browser':
+                        iconHtml = getBrowserIcon(key);
+                        break;
+                    case 'device':
+                        iconHtml = getDeviceIcon(key);
+                        break;
+                    case 'os':
+                        iconHtml = getOSIcon(key);
+                        break;
+                    default:
+                        break;
+                }
+
+                // Combine the icon and the key for the table cell
+                const displayKey = `${iconHtml} ${key}`;
+
+                // Set gradient background with a softer edge
+                let gradientStart, gradientEnd;
+
+                if (percentage < 100) {
+                    // Apply a softer edge for percentages less than 100
+                    gradientStart = Math.max(0, percentage );
+                    gradientEnd = Math.min(100, parseFloat(percentage) + 10);
+                } else {
+                    // For 100%, fill the entire cell
+                    gradientStart = 100;
+                    gradientEnd = 100;
+                }
+
+                const gradientStyle = `background: linear-gradient(to right, rgba(119, 194, 223, .2) ${gradientStart}%, #fff ${gradientEnd}%, #fff 100%);`;
+
+
+                tableContent += `<tr><td class="capitalize">${displayKey}</td><td style="${gradientStyle}"><strong>${value}</strong> | ${percentage}%</td></tr>`;
+            }
+
+            tableContent += '</tbody></table>';
+            container.innerHTML = tableContent;
+        }
+
+
+
+
+
+    </script>
+</body>
+
+</html>

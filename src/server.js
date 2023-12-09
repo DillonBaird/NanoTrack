@@ -89,6 +89,13 @@ function configureRoutes(app, wsServer) {
         res.sendFile(path.join(__dirname, 'ui/campaigns.html'));
     });
 
+    app.get('/campaigns/:campaignId', isAuthenticated, (req, res) => {
+        if (req.url.endsWith('/')) {
+            res.redirect(301, req.url.slice(0, -1));
+        }
+        res.sendFile(path.join(__dirname, 'ui/campaign.html'));
+    });
+
     app.get('/scripts/charts.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/charts.js')));
     app.get('/scripts/navigation.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/navigation.js')));
     app.get('/scripts/dataProcessing.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/dataProcessing.js')));

@@ -15,12 +15,12 @@
         }
     </style>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <script src="scripts/navigation.js"></script>
-    <script src="scripts/websocket.js"></script>
-    <script src="scripts/dataProcessing.js"></script>
-    <script src="scripts/charts.js"></script>
-    <script src="scripts/uiHelpers.js"></script>
-    <script src="scripts/filters.js"></script>
+    <script src="/scripts/navigation.js"></script>
+    <script src="/scripts/websocket.js"></script>
+    <script src="/scripts/dataProcessing.js"></script>
+    <script src="/scripts/charts.js"></script>
+    <script src="/scripts/uiHelpers.js"></script>
+    <script src="/scripts/filters.js"></script>
 </head>
 
 <body class="bg-gray-100 flex flex-col min-h-screen">
@@ -58,7 +58,7 @@
             <input type="text" id="searchInput" class="flex-grow form-input px-4 py-2 border"
                 placeholder="Search for data...">
             <button onclick="clearFilters()"
-                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Clear Filters</button>
+                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Clear Filters</button>
         </div>
         <div class="flex gap-4 mb-4">
             <input type="date" id="startDate" class="form-input px-4 py-2 border">
@@ -97,10 +97,10 @@
 
         <div id="pagination" class="my-4">
             <button onclick="changePage(-1)"
-                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Previous</button>
+                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Previous</button>
             <span id="currentPage" class="mx-4 font-semibold">1</span>
             <button onclick="changePage(1)"
-                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Next</button>
+                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Next</button>
         </div>
 
     </div>

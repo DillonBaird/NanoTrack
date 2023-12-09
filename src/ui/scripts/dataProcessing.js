@@ -52,7 +52,7 @@ function applyFiltersAndRefresh() {
 
 
 function fetchData(page = 1, limit = 1000) {
-    return fetch(`track/api/tracking-data?page=${page}&limit=${limit}`)
+    return fetch(`/track/api/tracking-data?page=${page}&limit=${limit}`)
         .then(response => response.json())
         .then(data => {
             trackingData = data.data;
@@ -69,7 +69,7 @@ function fetchData(page = 1, limit = 1000) {
 }
 
 function fetchChartData() {
-    fetch('track/api/chart-data')
+    fetch('/track/api/chart-data')
         .then(response => response.json())
         .then(data => {
             updateChart(data.ipCounts);
