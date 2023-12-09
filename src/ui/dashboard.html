@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NanoTrack - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css" />
+    <style>
+        .custom-bg {
+            background-color: #3C318D;
+        }
+    </style>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script src="scripts/navigation.js"></script>
+    <script src="scripts/websocket.js"></script>
+    <script src="scripts/dataProcessing.js"></script>
+    <script src="scripts/charts.js"></script>
+    <script src="scripts/uiHelpers.js"></script>
+    <script src="scripts/filters.js"></script>
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <div class="custom-bg py-4">
+        <div class="container mx-auto text-center text-white">
+            <div id="header"></div>
+        </div>
+    </div>
+    <div class="flex-grow container mx-auto py-8 px-5">
+        <h1 class="text-3xl font-bold mb-4">Real-Time Dashboard</em></h1>
+        <!-- Charts and Data Display Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Data Chart -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="chart-container">
+                    <canvas id="dataChart" class="w-full"></canvas>
+                </div>
+            </div>
+            <!-- Campaign Chart -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="chart-container">
+                    <canvas id="campaignChart" class="w-full"></canvas>
+                </div>
+            </div>
+            <!-- Path Chart -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="chart-container">
+                    <canvas id="pathChart" class="w-full"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="flex gap-4 my-4">
+            <input type="text" id="searchInput" class="flex-grow form-input px-4 py-2 border"
+                placeholder="Search for data...">
+            <button onclick="clearFilters()"
+                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Clear Filters</button>
+        </div>
+        <div class="flex gap-4 mb-4">
+            <input type="date" id="startDate" class="form-input px-4 py-2 border">
+            <input type="date" id="endDate" class="form-input px-4 py-2 border">
+        </div>
+
+        <!-- Data Table -->
+        <div class="overflow-x-auto">
+            <table id="trackingData" class="table-auto w-full">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Campaign</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Event</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Referer</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">IP</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Browser</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Device</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">OS</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Country</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Region</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">City</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Timezone</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Language</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Decay</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Params</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Accept Headers</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">DNT</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">HTTP Version</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light">
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="pagination" class="my-4">
+            <button onclick="changePage(-1)"
+                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Previous</button>
+            <span id="currentPage" class="mx-4 font-semibold">1</span>
+            <button onclick="changePage(1)"
+                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Next</button>
+        </div>
+
+    </div>
+
+    <div class="custom-bg py-4">
+        <div class="container mx-auto text-center text-white text-sm">
+            <div id="footer"></div>
+        </div>
+    </div>
+
+</body>
+
+</html>

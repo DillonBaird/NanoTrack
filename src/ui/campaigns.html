@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NanoTrack - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css" />
+    <style>
+        .custom-bg {
+            background-color: #3C318D;
+        }
+        .dropdown-menu {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .dropdown-item {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+        .view-details-btn {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            /* Adjust the positioning as needed */
+        }
+    </style>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <script src="scripts/navigation.js"></script>
+    <script src="scripts/websocket.js"></script>
+    <script src="scripts/uiHelpers.js"></script>
+    <script src="scripts/dataProcessing.js"></script>
+    <script src="scripts/charts.js"></script>
+    <script src="scripts/filters.js"></script>
+    <script src="scripts/campaigns.js"></script>
+</head>
+
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <div class="custom-bg py-4">
+        <div class="container mx-auto text-center text-white">
+            <div id="header"></div>
+        </div>
+    </div>
+    <div class="flex-grow container mx-auto py-8 text-sm px-5">
+        <h1 class="text-3xl font-bold">Campaigns</h1>
+        
+        <!-- Data Tables -->
+        <div id="campaignsContainer"></div>
+
+    </div>
+
+    <div class="custom-bg py-4">
+        <div class="container mx-auto text-center text-white text-sm">
+            <div id="footer"></div>
+        </div>
+    </div>
+</body>
+
+</html>

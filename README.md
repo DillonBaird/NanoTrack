@@ -1,4 +1,4 @@
-# 📊 NanoTrack: Nano-Size Spy-Pixel Analytics
+# 📊 NanoTrack: 1x1 Nano-Size Spy-Pixel Analytics
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![Docker Pulls](https://img.shields.io/docker/pulls/nanotrack)
@@ -50,7 +50,7 @@ NanoTrack is currently in an **early-release beta** phase. This is an exciting s
 I'm excited to have you aboard during this pivotal phase of NanoTrack's development and look forward to growing together!
 
 ## 📖 Table of Contents
-- [📊 NanoTrack: Nano-Size Spy-Pixel Analytics](#-nanotrack-nano-size-spy-pixel-analytics)
+- [📊 NanoTrack: 1x1 Nano-Size Spy-Pixel Analytics](#-nanotrack-1x1-nano-size-spy-pixel-analytics)
   - [🌟 Introduction](#-introduction)
   - [🌄 Background](#-background)
   - [⚠️ Limitations of Pixel Tracking](#️-limitations-of-pixel-tracking)
@@ -154,7 +154,7 @@ Track user interactions on specific web pages by embedding a tracking URL. For e
 ### Email Tracking
 Track email opens by embedding a tracking URL in the email. For instance, to track an email open for an `offer letter` sent to `dillon@dillonbaird.io`, use:
 
-> http://**[your_server_ip]**/track/**dillon@dillonbaird.io**.gif?campaignID=**email-offerletter**
+> http://**[your_server_ip]**/track/**email-open:dillon@dillonbaird.io**.gif?campaignID=**email-offerletter**
 
 ### Event Tracking
 Monitor specific user actions or events on your application. For instance, to track `user registrations`, you can embed a URL like this:
@@ -166,7 +166,7 @@ This example would track whenever a user accesses the registration page, helping
 ### Advanced Parameter Tracking
 NanoTrack also supports tracking of additional custom parameters. You can append any number of custom parameters to your tracking URL to gather more detailed insights. For instance, to track how far users scroll on a blog post and whether they use dark mode, you might use:
 
-> http://**[your_server_ip]**/track/**blog/growing-up-digital**.gif?campaignID=**dillonbaird.io**&**scroll-depth=70%**&**dark-mode=true**
+> http://**[your_server_ip]**/track/**pageview**.gif?campaignID=**dillonbaird.io**&**scroll-depth=70%**&**dark-mode=true**
 
 This method allows for a highly detailed understanding of user behavior and preferences, making your analytics more robust and actionable.
 

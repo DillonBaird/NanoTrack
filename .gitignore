@@ -1,7 +1,6 @@
 /.env
 /.vscode
-/Dockerfile
 /node_modules
-/package-lock.json
 /package.json
-/src
+.DS_Store
+db.json
