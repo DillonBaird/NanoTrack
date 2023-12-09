@@ -4,11 +4,52 @@ function renderCampaignTables(data) {
 
     campaignsContainer.innerHTML = ''; // Clear existing content
 
-    Object.keys(groupedData).forEach(campaignId => {
-        const table = createTableForCampaign(campaignId, groupedData[campaignId]);
-        campaignsContainer.appendChild(table);
-    });
+    if (Object.keys(groupedData).length === 0) {
+        // Show UI for creating a new tracking code
+        showNoCampaignUI();
+    } else {
+        Object.keys(groupedData).forEach(campaignId => {
+            const table = createTableForCampaign(campaignId, groupedData[campaignId]);
+            campaignsContainer.appendChild(table);
+        });
+    }
+    if (Object.keys(groupedData).length > 0) {
+        const campaignsHeader = document.querySelector('h1.text-3xl.font-bold'); // Selector for the 'Campaigns' header
+        const createButton = document.createElement('button');
+        createButton.id = 'createCampaignBtn';
+        createButton.textContent = 'Create New';
+        createButton.className = 'py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-700 cursor-pointer ml-4'; // Added margin for spacing
+
+        // Event listener for the button
+        createButton.addEventListener('click', () => {
+            generateTracking();
+        });
+
+        // Insert the button next to the 'Campaigns' header
+        campaignsHeader.parentNode.insertBefore(createButton, campaignsHeader.nextSibling);
+    }
 }
+
+function showNoCampaignUI() {
+    const campaignsContainer = document.getElementById('campaignsContainer');
+    
+    // Message for no campaigns
+    const noCampaignMessage = document.createElement('p');
+    noCampaignMessage.textContent = 'No campaigns found. Create a new tracking code:';
+    noCampaignMessage.className = 'text-center my-4';
+
+    // Button for creating a new tracking code
+    const createButton = document.createElement('button');
+    createButton.textContent = 'Create New Tracking Code';
+    createButton.className = 'py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-700 cursor-pointer';
+    createButton.addEventListener('click', () => {
+        generateTracking()
+    });
+
+    campaignsContainer.appendChild(noCampaignMessage);
+    campaignsContainer.appendChild(createButton);
+}
+
 
 function createTableForCampaign(campaignId, data) {
     // Create a card container for each campaign
@@ -156,13 +197,11 @@ function deleteCampaign(campaignId) {
 }
 
 function generateTracking(campaignId) {
-    // Create and show a modal with dropdowns for event type and campaign ID
-
-    // Example modal structure
+    // Create and show a modal with dropdowns for event type and optional campaign ID input
     const modal = document.createElement('div');
     modal.className = 'tracking-modal'; // Add classes for styling
-    modal.innerHTML = `
-        <div class="modal-content relative">
+    let modalContentHTML = `
+        <div class="modal-content relative w-1/2">
             <h2 class="mb-4 text-lg font-medium">Generate Tracking URL and Embed Code</h2>
             <label for="eventType">Event Type:</label>
             <select id="eventType" name="eventType">
@@ -171,63 +210,97 @@ function generateTracking(campaignId) {
                 <option value="other">Other</option>
                 <!-- Add other event types as needed -->
             </select>
+            <!-- Hidden input field for custom event type -->
+        <input type="text" id="customEventType" name="customEventType" class="hidden border-2 border-gray-300 rounded py-2 px-4 mb-0 mt-2 w-full" placeholder="Enter custom event type"/>
+    `;
 
+    // Add campaign ID input field if campaignId is not provided
+    if (!campaignId) {
+        modalContentHTML += `
+            <label for="campaignIdInput" class="block mt-4">Campaign ID:</label>
+            <input type="text" id="campaignIdInput" name="campaignIdInput" class="border-2 border-gray-300 rounded py-2 px-4 mb-4 w-full" placeholder="Enter campaign name"/>
+        `;
+    } else {
+        modalContentHTML += `
             <label for="campaignId" class="hidden">Campaign ID:</label>
             <select id="campaignId" name="campaignId" class="hidden">
                 <option value="${campaignId}">${campaignId}</option>
                 <!-- Populate with other campaign IDs if needed -->
             </select>
+        `;
+    }
 
-            <!-- Hidden input field for custom event type -->
-            <input type="text" id="customEventType" name="customEventType" class="hidden" placeholder="Enter custom event type"/>
+    // Continue with the rest of the modal content
+    modalContentHTML += `
+        
 
-            <p class="mt-6 mb-2">Generated Image URL:<br/><span id="generatedUrl"></span></p>
-            <p>Embed Code: <pre id="embedCode" class="text-sm"></pre></p>
+        <p class="mt-6 mb-2">Generated Image URL:<br/><span id="generatedUrl"></span></p>
+        <p>Embed Code: <pre id="embedCode" class="text-sm"></pre></p>
 
-            <button onclick="closeModal()" class="absolute top-4 right-4">Close</button>
+        <button onclick="closeModal()" class="absolute top-4 right-4">Close</button>
         </div>
     `;
+
+    modal.innerHTML = modalContentHTML;
     document.body.appendChild(modal);
 
-    // Add event listeners
+    // Add event listeners and initial update
     const eventTypeDropdown = document.getElementById('eventType');
     const customEventTypeInput = document.getElementById('customEventType');
+    const campaignIdElement = campaignId ? document.getElementById('campaignId') : document.getElementById('campaignIdInput');
 
+    // Update to show/hide the custom event type input based on selection
     eventTypeDropdown.addEventListener('change', () => {
-        // Show/hide custom input based on selection and update tracking info
         if (eventTypeDropdown.value === 'other') {
-            customEventTypeInput.classList.remove('hidden');
+            customEventTypeInput.classList.remove('hidden'); // Show the custom input
             customEventTypeInput.value = ''; // Clear previous value
         } else {
-            customEventTypeInput.classList.add('hidden');
+            customEventTypeInput.classList.add('hidden'); // Hide the custom input
         }
         updateTrackingInfo();
     });
 
     customEventTypeInput.addEventListener('input', updateTrackingInfo);
+    if (!campaignId) {
+        campaignIdElement.addEventListener('input', updateTrackingInfo);
+    }
 
     // Initial update
     updateTrackingInfo();
 }
 
+
 function updateTrackingInfo() {
     const host = window.location.protocol + "//" + window.location.host;
     const eventTypeDropdown = document.getElementById('eventType');
     let eventType = eventTypeDropdown.value;
-    const campaignId = document.getElementById('campaignId').value;
+    
+    // Get the campaign ID either from the provided variable or the input field
+    let campaignId = document.getElementById('campaignId') ? document.getElementById('campaignId').value : document.getElementById('campaignIdInput').value;
+
+    campaignId = campaignId.replaceAll(' ','-')
+
     const customEventTypeInput = document.getElementById('customEventType');
 
     if (eventType === 'other' && customEventTypeInput.value) {
         eventType = customEventTypeInput.value.replaceAll(' ','-');
     }
 
-    // Generate URL based on selected values
-    const baseUrl = host + '/track';
-    const generatedUrl = `${baseUrl}/${eventType}.gif?campaignID=${campaignId}`;
+    // Only generate URL if campaignId is available
+    if (campaignId) {
+        // Generate URL based on selected values
+        const baseUrl = host + '/track';
+        const generatedUrl = `${baseUrl}/${eventType}.gif?campaignID=${campaignId}`;
 
-    document.getElementById('generatedUrl').textContent = generatedUrl;
-    document.getElementById('embedCode').textContent = `<img src="${generatedUrl}" alt="Tracking Image" />`;
+        document.getElementById('generatedUrl').textContent = generatedUrl;
+        document.getElementById('embedCode').textContent = `<img src="${generatedUrl}" alt="NanoTrack" />`;
+    } else {
+        // Clear the displayed URL and embed code if campaignId is not available
+        document.getElementById('generatedUrl').textContent = '';
+        document.getElementById('embedCode').textContent = '';
+    }
 }
+
 
 function closeModal() {
     // Close and remove the modal
