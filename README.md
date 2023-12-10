@@ -12,24 +12,7 @@ NanoTrack was born out of a simple yet profound idea: to shed light on the exten
 
 What started as an inspirational idea quickly evolved into something much more significant. In just a matter of three days, version 1.0 of NanoTrack went from a conceptual spark to a full-fledged self-hosting analytic tool. The realization of how valuable this tool could be for various use cases was a driving force behind its rapid development.
 
-## ⚠️ Limitations of Pixel Tracking
 
-While NanoTrack provides a streamlined and efficient approach to web analytics, it's important for users to understand the inherent limitations of pixel tracking technology. This understanding will help in determining the best use cases for NanoTrack and how it complements other analytics tools.
-
-### Caching Challenges
-- **Impact on Repeat Tracking:** Caching mechanisms in browsers and networks can impact the ability to track repeat visits accurately. When a tracking pixel is cached, subsequent requests may not reach the server, leading to undercounting of user interactions.
-- **NanoTrack's Mitigation Efforts:** Although NanoTrack implements strategies to minimize caching effects (such as cache-busting techniques), it's crucial to acknowledge that these methods can't completely eliminate the impact of caching on analytics.
-
-### Comparison with Standard Analytics
-- **Not a Full Replacement:** Given the limitations posed by caching and the nature of pixel tracking, NanoTrack is not a 1-to-1 replacement for standard, JavaScript-heavy analytics solutions. 
-- **Solid Alternative with Right Implementation:** However, with the right implementation and understanding of its limitations, NanoTrack can serve as a solid alternative or complement to traditional analytics tools, especially in scenarios where lightweight and unobtrusive tracking is desired.
-
-### Ideal Use Cases
-- **Email Open Tracking:** Perfect for environments where embedding JavaScript is not feasible, such as tracking email opens.
-- **Basic Pageview Tracking:** Well-suited for simple pageview tracking, where detailed user interactions are not the primary focus.
-- **Complement to Standard Analytics:** Can be used alongside more comprehensive analytics solutions to provide additional insights without adding significant load to your web pages.
-
-Understanding these limitations is key to leveraging NanoTrack effectively. It’s designed to offer a balance between performance and tracking capabilities, catering to specific scenarios where a lightweight and ethical approach to analytics is preferred.
 
 ## 🚧 Early-Release Beta Status
 
@@ -53,16 +36,12 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
 - [📊 NanoTrack: 1x1 Nano-Size Spy-Pixel Analytics](#-nanotrack-1x1-nano-size-spy-pixel-analytics)
   - [🌟 Introduction](#-introduction)
   - [🌄 Background](#-background)
-  - [⚠️ Limitations of Pixel Tracking](#️-limitations-of-pixel-tracking)
-    - [Caching Challenges](#caching-challenges)
-    - [Comparison with Standard Analytics](#comparison-with-standard-analytics)
-    - [Ideal Use Cases](#ideal-use-cases)
   - [🚧 Early-Release Beta Status](#-early-release-beta-status)
     - [Current Phase](#current-phase)
     - [Expect Continuous Improvements](#expect-continuous-improvements)
     - [Your Feedback Matters](#your-feedback-matters)
     - [A Note of Caution](#a-note-of-caution)
-  - [� Table of Contents](#-table-of-contents)
+  - [📖 Table of Contents](#-table-of-contents)
   - [🚀 Getting Started](#-getting-started)
     - [Self-Hosting](#self-hosting)
     - [Cloud Providers](#cloud-providers)
@@ -94,6 +73,10 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
     - [Why Use HTTPS?](#why-use-https)
     - [Setting Up HTTPS with Cloudflare](#setting-up-https-with-cloudflare)
       - [Steps to Implement:](#steps-to-implement)
+  - [⚠️ Limitations of Pixel Tracking](#️-limitations-of-pixel-tracking)
+    - [Caching Challenges](#caching-challenges)
+    - [Comparison with Standard Analytics](#comparison-with-standard-analytics)
+    - [Ideal Use Cases](#ideal-use-cases)
   - [📏 NanoTrack vs. Google Analytics: A Comparison in Efficiency and Size](#-nanotrack-vs-google-analytics-a-comparison-in-efficiency-and-size)
     - [Tracking Pixel vs. JavaScript File Size](#tracking-pixel-vs-javascript-file-size)
     - [Network Request Size](#network-request-size)
@@ -310,6 +293,25 @@ One of the simplest ways to implement HTTPS is by using Cloudflare. Cloudflare p
 4. **Update NanoTrack URLs:** Ensure that all NanoTrack URLs in your project are updated to `https`.
 
 By following these steps, you can significantly enhance the security of your NanoTrack implementation with minimal effort.
+
+## ⚠️ Limitations of Pixel Tracking
+
+While NanoTrack provides a streamlined and efficient approach to web analytics, it's important for users to understand the inherent limitations of pixel tracking technology. This understanding will help in determining the best use cases for NanoTrack and how it complements other analytics tools.
+
+### Caching Challenges
+- **Impact on Repeat Tracking:** Caching mechanisms in browsers and networks can impact the ability to track repeat visits accurately. When a tracking pixel is cached, subsequent requests may not reach the server, leading to undercounting of user interactions.
+- **NanoTrack's Mitigation Efforts:** Although NanoTrack implements strategies to minimize caching effects (such as cache-busting techniques), it's crucial to acknowledge that these methods can't completely eliminate the impact of caching on analytics.
+
+### Comparison with Standard Analytics
+- **Not a Full Replacement:** Given the limitations posed by caching and the nature of pixel tracking, NanoTrack is not a 1-to-1 replacement for standard, JavaScript-heavy analytics solutions. 
+- **Solid Alternative with Right Implementation:** However, with the right implementation and understanding of its limitations, NanoTrack can serve as a solid alternative or complement to traditional analytics tools, especially in scenarios where lightweight and unobtrusive tracking is desired.
+
+### Ideal Use Cases
+- **Email Open Tracking:** Perfect for environments where embedding JavaScript is not feasible, such as tracking email opens.
+- **Basic Pageview Tracking:** Well-suited for simple pageview tracking, where detailed user interactions are not the primary focus.
+- **Complement to Standard Analytics:** Can be used alongside more comprehensive analytics solutions to provide additional insights without adding significant load to your web pages.
+
+Understanding these limitations is key to leveraging NanoTrack effectively. It’s designed to offer a balance between performance and tracking capabilities, catering to specific scenarios where a lightweight and ethical approach to analytics is preferred.
 
 ## 📏 NanoTrack vs. Google Analytics: A Comparison in Efficiency and Size
 
