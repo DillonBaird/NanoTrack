@@ -49,8 +49,6 @@ NanoTrack is currently in an **early-release beta** phase. This is an exciting s
 
 I'm excited to have you aboard during this pivotal phase of NanoTrack's development and look forward to growing together!
 
-# NanoTrack: Nano-Size Analytics
-
 ## 📏 NanoTrack vs. Google Analytics: A Comparison in Efficiency and Size
 
 NanoTrack offers a lightweight alternative to Google Analytics, focusing on minimal impact on website performance. Here's a detailed comparison highlighting the efficiency and size differences:
@@ -86,7 +84,6 @@ In essence, while Google Analytics provides comprehensive analytics capabilities
     - [Expect Continuous Improvements](#expect-continuous-improvements)
     - [Your Feedback Matters](#your-feedback-matters)
     - [A Note of Caution](#a-note-of-caution)
-- [NanoTrack: Nano-Size Analytics](#nanotrack-nano-size-analytics)
   - [📏 NanoTrack vs. Google Analytics: A Comparison in Efficiency and Size](#-nanotrack-vs-google-analytics-a-comparison-in-efficiency-and-size)
     - [Tracking Pixel vs. JavaScript File Size](#tracking-pixel-vs-javascript-file-size)
     - [Network Request Size](#network-request-size)
