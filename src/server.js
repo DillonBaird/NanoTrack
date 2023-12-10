@@ -2,6 +2,7 @@
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const express = require('express');
+const minifyHTML = require('express-minify-html');
 const nocache = require('nocache');
 const path = require('path');
 const useragent = require('express-useragent');
@@ -27,6 +28,20 @@ configureRoutes(app, webSocketServer);
 
 // Error Handling Middleware
 app.use(errorHandler);
+
+// Minification
+app.use(minifyHTML({
+    override: true,
+    exception_url: false,
+    htmlMinifier: {
+        removeComments: true,
+        collapseWhitespace: true,
+        collapseBooleanAttributes: true,
+        removeAttributeQuotes: true,
+        removeEmptyAttributes: true,
+        minifyJS: true
+    }
+}));
 
 // Server Activation
 const port = process.env.PORT || 3000;

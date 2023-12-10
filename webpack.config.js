@@ -1,5 +1,7 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const JavaScriptObfuscator = require('webpack-obfuscator');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
@@ -31,11 +33,47 @@ module.exports = {
       }
   },
   externals: [nodeExternals()],
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true, // Removes console logs for production
+            drop_debugger: true,
+            pure_funcs: ['console.info', 'console.debug', 'console.warn'],
+            // Additional compression options can be added here
+          },
+          mangle: {
+            // Mangle options go here
+            // properties: {
+            //   // Mangle property options (be cautious with this)
+            // },
+          },
+          format: {
+            comments: false, // Remove comments
+          },
+          // Additional Terser options can be added here
+        },
+        extractComments: false,
+      }),
+    ],
+  },
   plugins: [
     new CopyPlugin({
       patterns: [
         { from: 'src/ui', to: 'ui' } // Adjust the paths as necessary
       ],
     }),
+    new JavaScriptObfuscator({
+      // Options for obfuscation
+      // See https://github.com/javascript-obfuscator/javascript-obfuscator#options
+      rotateStringArray: true,
+      stringArray: true,
+      stringArrayThreshold: 0.75,
+      disableConsoleOutput: true,
+      renameGlobals: true,
+      // renameProperties: true,
+    }, []),
   ],
 };
