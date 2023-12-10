@@ -7,15 +7,15 @@ services:
       dockerfile: Dockerfile
     image: nanotrack:v1.0
     ports:
-      - "3000:3000"
+      - "3050:3050"
     environment:
       - NODE_ENV=production
       - MONGO_URI=mongodb://nanotrack:nanotrack@mongodb:27017/nanotrack  # Use the hostname "mongodb" if using the mongodb in this compose
-      - PORT=3000
+      - PORT=3050
       - DB_TYPE=mongodb
       # - DB_TYPE=flatfile #only recommended for testing
-      - USERNAME=admin
-      - PASSWORD=password
+      - USERNAME=nanotrack
+      - PASSWORD=admin
     restart: unless-stopped
 
   mongodb:

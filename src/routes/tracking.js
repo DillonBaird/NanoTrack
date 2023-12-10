@@ -85,7 +85,7 @@ module.exports = function (wss) {
 
         try {
             // Delete all tracking data associated with the campaignID
-            await TrackingData.deleteMany({ campaignID });
+            await TrackingData.deleteMany(campaignID.toString());
 
             res.status(200).json({ message: 'Campaign deleted successfully' });
         } catch (err) {
@@ -186,8 +186,9 @@ function reshapeData(data, keyName = 'path') {
 
 // Function to save tracking data and broadcast it to WebSocket clients
 async function saveAndBroadcastTrackingData(req, wss) {
+    const getRandomIP = () => ['74.115.209.58', '196.21.247.1'][Math.floor(Math.random() * 2)]; //req.ip
 
-    const geo = geoip.lookup(req.ip) || {};
+    const geo = geoip.lookup(getRandomIP()) || {};
     const trackingInfo = {
         host: req.get('host'),
         referer: req.get('referer') || '',
@@ -202,7 +203,7 @@ async function saveAndBroadcastTrackingData(req, wss) {
         },
         language: req.acceptsLanguages(),
         geo: {
-            ip: req.ip,
+            ip: getRandomIP(),
             ...geo
         },
         domain: req.hostname,

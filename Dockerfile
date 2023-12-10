@@ -15,10 +15,10 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npm build
-
 # Bundle app source
 COPY . .
+
+RUN npm run build:js
 
 EXPOSE 3000
 CMD [ "node", "dist/nanoTrack.js" ]

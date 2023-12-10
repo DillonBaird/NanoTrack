@@ -1,4 +1,5 @@
-let ws = new WebSocket('ws://localhost:3000');
+let ws = new WebSocket('ws://localhost:3050');
+//TODO: fix this to get current url
 
 ws.onopen = function () {
     console.log('WebSocket connection established');

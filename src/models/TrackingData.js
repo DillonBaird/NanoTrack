@@ -78,10 +78,10 @@ class TrackingDataAdapter {
         const db = getDB();
         if (db.model) {
             // Use Mongoose model to delete for MongoDB
-            return this.model.deleteMany({ campaignID });
+            return this.model.deleteMany({ campaignID: campaignID });
         } else {
             // If using a flat file, implement a corresponding delete logic
-            return db.deleteMany(campaignID);
+            return db.deleteMany({ campaignID });
             // throw new Error('deleteByCampaignID method not implemented for flat file DB');
         }
     }
