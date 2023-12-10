@@ -118,6 +118,7 @@ function configureRoutes(app, wsServer) {
     app.get('/scripts/uiHelpers.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/uiHelpers.js')));
     app.get('/scripts/websocket.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/websocket.js')));
     app.get('/scripts/campaigns.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/campaigns.js')));
+    app.get('/scripts/campaign.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/campaign.js')));
     app.get('/logo.png', (req, res) => res.sendFile(path.join(__dirname, 'ui/logo.png')));
     app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'ui/favicon.ico')));
 

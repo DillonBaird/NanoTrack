@@ -18,7 +18,7 @@ function renderCampaignTables(data) {
         const createButton = document.createElement('button');
         createButton.id = 'createCampaignBtn';
         createButton.textContent = '+ New Campaign';
-        createButton.className = 'py-2 px-4 bg-blue-500 text-white absolute right-4 rounded hover:bg-blue-700 cursor-pointer ml-4';
+        createButton.className = 'py-2 px-4 rounded-xl bg-transparent font-medium hover:bg-gray-700 text-gray-800 hover:text-white border border-gray-800 hover:border-transparent absolute right-4 rounded cursor-pointer ml-4';
 
         // Event listener for the button
         createButton.addEventListener('click', () => {
@@ -59,12 +59,12 @@ function createTableForCampaign(campaignId, data) {
 
     // Add a card header
     const cardHeader = document.createElement('div');
-    cardHeader.className = 'px-4 py-4 sm:px-6 border-b border-gray-200 relative';
-    cardHeader.innerHTML = `<h3 class="text-lg leading-6 font-medium text-gray-900 capitalize">🎯 <a href="/campaigns/${campaignId}">${campaignId.replaceAll('-',' ').replaceAll('_',' ')}</a></h3><h4 class="mt-4 font-semibold">5 Most Recent Events <em class="text-xs font-light text-light">(Not Realtime)</em></h4>`;
+    cardHeader.className = 'px-4 py-4 sm:px-6 relative';
+    cardHeader.innerHTML = `<h3 class="text-2xl leading-6 font-medium text-gray-900 capitalize">🎯 <a href="/campaigns/${campaignId}">${campaignId.replaceAll('-',' ').replaceAll('_',' ')}</a></h3>`;
     
     // Create the View Details button
     const viewDetailsButton = document.createElement('button');
-    viewDetailsButton.className = 'view-details-btn absolute top-4 right-14 cursor-pointer'; // Adjust classes for positioning
+    viewDetailsButton.className = 'view-details-btn bg-gray-800 hover:bg-gray-700 absolute top-4 right-14 cursor-pointer'; // Adjust classes for positioning
     viewDetailsButton.textContent = 'View Details';
     viewDetailsButton.addEventListener('click', function() {
         // Logic to view details of the campaign
@@ -87,6 +87,44 @@ function createTableForCampaign(campaignId, data) {
 
     cardContainer.appendChild(cardHeader);
 
+    // Calculate stats
+    const views = data.length; // Assuming each item in data is a view
+    const visitors = new Set(data.map(item => item.geo.ip)).size; // Unique visitor count
+    const referrers = new Set(data.map(item => item.referrer)).size;
+    const types = new Set(data.map(item => item.path)).size;
+    const countries = new Set(data.map(item => item.geo.country)).size;
+    const timezones = new Set(data.map(item => item.geo.timezone)).size;
+
+    // Add stats row
+    const statsRow = document.createElement('div');
+    statsRow.className = 'flex justify-around m-2 mt-3';
+
+    // Add individual stats to the row
+    const stats = [
+        { value: views, label: 'Views' },
+        { value: visitors, label: 'IPs' },
+        { value: referrers, label: 'Referrers' },
+        { value: types, label: 'Events' },
+        { value: countries, label: 'Countries' },
+        { value: timezones, label: 'Time Zones' }
+    ];
+
+    stats.forEach(stat => {
+        const statDiv = document.createElement('div');
+        statDiv.className = 'inline-flex flex-col items-center justify-center w-1/6 p-4';
+        statDiv.innerHTML = `<span class="text-xl xl:text-3xl font-bold">${stat.value}</span><label class="text-sm xl:text-lg font-medium">${stat.label}</label>`;
+        statsRow.appendChild(statDiv);
+    });
+
+    cardContainer.appendChild(statsRow);
+
+
+    //add table tile
+    const tableTitle = document.createElement('div');
+    tableTitle.className = '';
+    tableTitle.innerHTML = `<h4 class="mt-4 font-semibold mb-2 ml-2">5 Most Recent Events <em class="text-xs font-light text-light">(Not Realtime)</em></h4>`;
+    cardContainer.appendChild(tableTitle)
+
     // Create table within the card
     const tableWrapper = document.createElement('div');
     tableWrapper.className = 'overflow-x-auto';
@@ -94,7 +132,7 @@ function createTableForCampaign(campaignId, data) {
     table.className = 'min-w-full divide-y divide-gray-200';
 
     // Define your column headers based on the structure in populateTable
-    const headers = ['Event', 'Referer', 'IP', 'Browser', 'Device', 'OS', 'Country', 'Region', 'City', 'Timezone', 'Language', 'Timestamp'];
+    const headers = ['Event', 'referrer', 'IP', 'Browser', 'Device', 'OS', 'Country', 'Region', 'City', 'Timezone', 'Language', 'Timestamp'];
     const headerRow = document.createElement('tr');
     headerRow.className = 'bg-gray-200 text-gray-600 uppercase text-sm leading-normal'; // Styling for header row
     headers.forEach(headerText => {
@@ -114,7 +152,7 @@ function createTableForCampaign(campaignId, data) {
         row.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-100'; // Alternate row colors
         row.innerHTML = `
             <td class="px-4 py-2 whitespace-nowrap">${eventFromPath(item.path) || ''}</td>
-            <td class="px-4 py-2 whitespace-nowrap">${item.referer || 'direct'}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${item.referrer || 'direct'}</td>
             <td class="px-4 py-2 whitespace-nowrap">${item.geo?.ip.replace('::ffff:', '').replace('::1', 'localhost') || ''}</td>
             <td class="px-4 py-2 whitespace-nowrap">${getBrowserIcon(item.useragent?.browser)} ${item.useragent?.browser || ''} ${item.useragent?.version || ''}</td>
             <td class="px-4 py-2 whitespace-nowrap">${getDeviceIcon(item.useragent?.device)} ${item.useragent?.device || ''}</td>

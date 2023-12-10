@@ -4,7 +4,7 @@ const { getDB } = require('../db'); // Import getDB from db.js
 // Define the Mongoose schema for tracking data
 const trackingDataSchema = new mongoose.Schema({
     host: String,
-    referer: String,
+    referrer: String,
     params: mongoose.Schema.Types.Mixed,
     path: String,
     decay: Number,
