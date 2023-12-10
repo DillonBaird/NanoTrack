@@ -1,6 +1,11 @@
 # Dockerfile
 FROM node:14
 
+# Add metadata
+LABEL maintainer="Dillon Baird <Dillon@DillonBaird.io>"
+LABEL version="1.0"
+LABEL description="1x1 Nano-Size Spy-Pixel Analytics"
+
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -10,8 +15,10 @@ COPY package*.json ./
 
 RUN npm install
 
+RUN npm build
+
 # Bundle app source
 COPY . .
 
 EXPOSE 3000
-CMD [ "node", "src/server.js" ]
+CMD [ "node", "dist/nanoTrack.js" ]

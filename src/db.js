@@ -115,7 +115,7 @@ class FlatFileDB {
 
 // Determine database type and setup connection
 const dbType = process.env.DB_TYPE || 'mongodb';
-const flatFilePath = path.join(__dirname, 'db.json');
+const flatFilePath = path.join(__dirname, '../NanoTrack-DB.json');
 const flatFileDB = new FlatFileDB(flatFilePath);
 
 /**

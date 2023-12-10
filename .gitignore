@@ -1,6 +1,5 @@
 /.env
 /.vscode
 /node_modules
-/package-lock.json
 .DS_Store
-db.json
+NanoTrack-DB.json
