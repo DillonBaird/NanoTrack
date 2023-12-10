@@ -1,6 +1,6 @@
 /.env
 /.vscode
 /node_modules
-/package.json
 .DS_Store
 db.json
+/package-lock.json
