@@ -19,7 +19,7 @@ function populateTable(data) {
             const rowClass = index % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200';
 
             let row = `<tr class="${rowClass}">
-                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${item.campaignID}</td>
+                    <td  class="px-4 py-2  whitespace-nowrap"><a class="underline hover:font-medium" href="/campaigns/${item.campaignID}">${item.campaignID}</a></td>
                     <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${eventFromPath(item.path) || ''}</td>
                     <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${item.referer || 'direct'}</td>
                     <td  class="px-4 py-2  whitespace-nowrap">${item.geo?.ip.replace('::ffff:','').replace('::1','localhost') || ''}</td>
@@ -123,6 +123,7 @@ function getOSIcon(osName) {
 
 function getCountryFlagIcon(countryCode) {
     if (!countryCode) return '';
+    if (countryCode === 'Unknown' ) return `<i class="fas fa-question mx-1"></i>`;
 
     return `<span class="fi fi-${countryCode.toLowerCase()}"></span>`;
 }

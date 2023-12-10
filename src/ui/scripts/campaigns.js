@@ -14,19 +14,19 @@ function renderCampaignTables(data) {
         });
     }
     if (Object.keys(groupedData).length > 0) {
-        const campaignsHeader = document.querySelector('h1.text-3xl.font-bold'); // Selector for the 'Campaigns' header
+        const headerContainer = document.querySelector('.header-container'); // Selector for the new header container
         const createButton = document.createElement('button');
         createButton.id = 'createCampaignBtn';
-        createButton.textContent = 'Create New';
-        createButton.className = 'py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-700 cursor-pointer ml-4'; // Added margin for spacing
+        createButton.textContent = '+ New Campaign';
+        createButton.className = 'py-2 px-4 bg-blue-500 text-white absolute right-4 rounded hover:bg-blue-700 cursor-pointer ml-4';
 
         // Event listener for the button
         createButton.addEventListener('click', () => {
             generateTracking();
         });
 
-        // Insert the button next to the 'Campaigns' header
-        campaignsHeader.parentNode.insertBefore(createButton, campaignsHeader.nextSibling);
+        // Append the button to the header container
+        headerContainer.appendChild(createButton);
     }
 }
 
@@ -60,7 +60,7 @@ function createTableForCampaign(campaignId, data) {
     // Add a card header
     const cardHeader = document.createElement('div');
     cardHeader.className = 'px-4 py-4 sm:px-6 border-b border-gray-200 relative';
-    cardHeader.innerHTML = `<h3 class="text-lg leading-6 font-medium text-gray-900 capitalize">🎯 ${campaignId.replaceAll('-',' ').replaceAll('_',' ')}</h3><h4 class="mt-4 font-semibold">5 Most Recent Events <em class="text-xs font-light text-light">(Not Realtime)</em></h4>`;
+    cardHeader.innerHTML = `<h3 class="text-lg leading-6 font-medium text-gray-900 capitalize">🎯 <a href="/campaigns/${campaignId}">${campaignId.replaceAll('-',' ').replaceAll('_',' ')}</a></h3><h4 class="mt-4 font-semibold">5 Most Recent Events <em class="text-xs font-light text-light">(Not Realtime)</em></h4>`;
     
     // Create the View Details button
     const viewDetailsButton = document.createElement('button');
@@ -77,7 +77,7 @@ function createTableForCampaign(campaignId, data) {
 
     // Add more options icon with dropdown
     const moreOptionsIcon = document.createElement('i');
-    moreOptionsIcon.className = 'fas fa-ellipsis-v absolute top-6 right-4 cursor-pointer';
+    moreOptionsIcon.className = 'fas fa-ellipsis-v absolute top-6 right-6 cursor-pointer';
     moreOptionsIcon.addEventListener('click', function (event) {
         event.stopPropagation();
         showDropdownMenu(this, campaignId);
