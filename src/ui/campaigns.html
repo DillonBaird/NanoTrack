@@ -63,6 +63,17 @@
             display: flex;
             align-items: center; /* Align items vertically */
         }
+        #eventType {
+            height: 2.5rem; /* Match the height with other inputs */
+            padding: 0.5rem 1rem; /* Padding for text */
+            -webkit-appearance: none; /* Remove default styling */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23999" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center; /* Position for arrow */
+            background-size: 1.5em;
+        }
     </style>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
@@ -81,7 +92,7 @@
             <div id="header"></div>
         </div>
     </div>
-    <div class="flex-grow container header-container mx-auto pt-4 text-sm px-5 relative">
+    <div class="container header-container mx-auto pt-6 text-sm px-5 relative">
         <h1 class="text-3xl font-bold">Campaigns</h1>
 
     </div>

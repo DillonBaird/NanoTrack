@@ -9,6 +9,7 @@ const useragent = require('express-useragent');
 const WebSocket = require('ws');
 const { dbConnect } = require('./db');
 const http = require('http');
+const mongoose = require('mongoose');
 
 // Initialize Express application and create HTTP server
 const app = express();
@@ -44,8 +45,31 @@ app.use(minifyHTML({
 }));
 
 // Server Activation
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 80;
 httpServer.listen(port, () => console.log(`Server is running on http://localhost:${port}`));
+
+// Graceful Shutdown Function
+function gracefulShutdown() {
+    console.log("Received SIGTERM, gracefully shutting down");
+
+    httpServer.close(() => {
+        console.log("HTTP server closed");
+
+        // Close WebSocket server
+        webSocketServer.close(() => {
+            console.log("WebSocket server closed");
+
+            // Close Mongoose connection
+            mongoose.connection.close(false, () => {
+                console.log("MongoDB connection closed.");
+                process.exit(0);
+            });
+        });
+    });
+}
+
+// Listen for SIGTERM signal
+process.on('SIGTERM', gracefulShutdown);
 
 // Export Application and WebSocket Server
 module.exports = { app, webSocketServer };

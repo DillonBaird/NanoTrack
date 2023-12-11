@@ -187,7 +187,7 @@ function reshapeData(data, keyName = 'path') {
 // Function to save tracking data and broadcast it to WebSocket clients
 async function saveAndBroadcastTrackingData(req, wss) {
 
-    const geo = geoip.lookup(req.ip()) || {};
+    const geo = geoip.lookup(req.ip) || {};
     const trackingInfo = {
         host: req.get('host'),
         referer: req.get('referer') || '',
@@ -202,7 +202,7 @@ async function saveAndBroadcastTrackingData(req, wss) {
         },
         language: req.acceptsLanguages(),
         geo: {
-            ip: req.ip(),
+            ip: req.ip,
             ...geo
         },
         domain: req.hostname,

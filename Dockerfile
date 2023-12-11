@@ -1,5 +1,5 @@
-# Dockerfile
-FROM node:14
+# Stage 1: Build stage
+FROM node:lts-alpine AS builder
 
 # Add metadata
 LABEL maintainer="Dillon Baird <Dillon@DillonBaird.io>"
@@ -10,15 +10,24 @@ LABEL description="1x1 Nano-Size Spy-Pixel Analytics"
 WORKDIR /usr/src/app
 
 # Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
-
-RUN npm install
+RUN npm ci
 
 # Bundle app source
 COPY . .
 
-RUN npm run build:js
+# Build the application
+RUN npm run build:js && npm prune --production
 
+# Stage 2: Runtime stage
+FROM node:lts-alpine
+
+# Copy built assets from builder stage
+WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app .
+
+# Expose the necessary port
 EXPOSE 3000
+
+# Define the command to run the app
 CMD [ "node", "dist/nanoTrack.js" ]

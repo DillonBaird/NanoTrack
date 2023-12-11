@@ -252,6 +252,11 @@ const countryCodeToName = {
     "ZW": "Zimbabwe"
 };
 
+const countryNameToCode = Object.entries(countryCodeToName).reduce((acc, [code, name]) => {
+    acc[name] = code;
+    return acc;
+}, {});
+
 function createCampaignDataTable(data) {
     const headerTable = document.createElement('table');
     const bodyTable = document.createElement('table');
@@ -428,7 +433,7 @@ function displayCampaignData(data) {
     // Convert countryCounts keys from codes to names
     const convertedCountryCounts = {};
     for (const [code, count] of Object.entries(countryCounts)) {
-        const countryName = countryCodeToName[code];
+        const countryName = countryCodeToName[code] || 'Unknown';
         if (countryName) {
             convertedCountryCounts[countryName] = count;
         }
@@ -471,7 +476,7 @@ function generateTracking(campaignId) {
             <h2 class="text-xl font-semibold mb-4">Generate Tracking URL and Embed Code</h2>
             <div class="mb-4">
                 <label for="eventType" class="block text-gray-700 text-sm font-bold mb-2">Event Type:</label>
-                <select id="eventType" name="eventType" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <select id="eventType" name="eventType" class="inline-block w-1/6 bg-white border border-gray-300 text-gray-700 rounded leading-tight outline-none focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
                     <option value="pageview">PageView</option>
                     <option value="email-open">Email-Open</option>
                     <option value="other">Other</option>
@@ -771,6 +776,7 @@ function groupData(data, key) {
 }
 
 
+
 function populateList(containerId, counts, header1, header2, dataType) {
     const container = document.getElementById(containerId);
 
@@ -795,7 +801,7 @@ function populateList(containerId, counts, header1, header2, dataType) {
                 iconHtml = getOSIcon(key);
                 break;
             case 'country':
-                iconHtml = getCountryFlagIcon(key);
+                iconHtml = getCountryFlagIcon(countryNameToCode[key] || 'Unknown');
                 break;
             default:
                 break;

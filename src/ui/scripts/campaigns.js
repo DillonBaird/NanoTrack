@@ -35,32 +35,32 @@ function showNoCampaignUI() {
     
     // Message for no campaigns
     const noCampaignMessage = document.createElement('p');
-    noCampaignMessage.textContent = 'No campaigns found. Create a new tracking code:';
-    noCampaignMessage.className = 'text-center my-4';
+    noCampaignMessage.textContent = 'No campaigns found. Create a new tracking code';
+    noCampaignMessage.className = 'text-center my-4 pt-[25dvh]';
 
     // Button for creating a new tracking code
     const createButton = document.createElement('button');
     createButton.textContent = 'Create New Tracking Code';
-    createButton.className = 'py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-700 cursor-pointer';
+    createButton.className = 'block mx-auto my-6 py-2 px-4 bg-gray-800 text-white rounded hover:bg-gray-700 cursor-pointer';
     createButton.addEventListener('click', () => {
         generateTracking()
     });
 
     campaignsContainer.appendChild(noCampaignMessage);
-    campaignsContainer.appendChild(createButton);
+    noCampaignMessage.appendChild(createButton);
 }
 
 
 function createTableForCampaign(campaignId, data) {
     // Create a card container for each campaign
     const cardContainer = document.createElement('div');
-    cardContainer.className = 'bg-white shadow overflow-hidden sm:rounded-lg my-4';
+    cardContainer.className = 'bg-white shadow overflow-hidden sm:rounded-lg my-8';
     cardContainer.id = campaignId;
 
     // Add a card header
     const cardHeader = document.createElement('div');
     cardHeader.className = 'px-4 py-4 sm:px-6 relative';
-    cardHeader.innerHTML = `<h3 class="text-2xl leading-6 font-medium text-gray-900 capitalize">🎯 <a href="/campaigns/${campaignId}">${campaignId.replaceAll('-',' ').replaceAll('_',' ')}</a></h3>`;
+    cardHeader.innerHTML = `<h3 class="text-2xl leading-6 font-medium text-gray-900 capitalize">🎯 <a class="hover:underline" href="/campaigns/${campaignId}">${campaignId.replaceAll('-',' ').replaceAll('_',' ')}</a></h3>`;
     
     // Create the View Details button
     const viewDetailsButton = document.createElement('button');
@@ -122,7 +122,7 @@ function createTableForCampaign(campaignId, data) {
     //add table tile
     const tableTitle = document.createElement('div');
     tableTitle.className = '';
-    tableTitle.innerHTML = `<h4 class="mt-4 font-semibold mb-2 ml-2">5 Most Recent Events <em class="text-xs font-light text-light">(Not Realtime)</em></h4>`;
+    tableTitle.innerHTML = `<h4 class="mt-6 font-semibold mb-4 ml-4">5 Most Recent Events <em class="text-xs font-light text-light">(Not Realtime)</em></h4>`;
     cardContainer.appendChild(tableTitle)
 
     // Create table within the card
@@ -134,7 +134,7 @@ function createTableForCampaign(campaignId, data) {
     // Define your column headers based on the structure in populateTable
     const headers = ['Event', 'referrer', 'IP', 'Browser', 'Device', 'OS', 'Country', 'Region', 'City', 'Timezone', 'Language', 'Timestamp'];
     const headerRow = document.createElement('tr');
-    headerRow.className = 'bg-gray-200 text-gray-600 uppercase text-sm leading-normal'; // Styling for header row
+    headerRow.className = 'bg-gray-100 text-gray-600 uppercase text-sm leading-normal'; // Styling for header row
     headers.forEach(headerText => {
         const header = document.createElement('th');
         header.className = 'py-3 px-6 text-left whitespace-nowrap'; // Styling for each header
@@ -226,6 +226,7 @@ function deleteCampaign(campaignId) {
                 const campaignElement = document.getElementById(campaignId);
                 if (campaignElement) {
                     campaignElement.remove(); // Remove the campaign card from the DOM
+                    location.reload()
                 } else {
                     console.error('Campaign element not found:', campaignId);
                 }
@@ -244,7 +245,7 @@ function generateTracking(campaignId) {
             <h2 class="text-xl font-semibold mb-4">Generate Tracking URL and Embed Code</h2>
             <div class="mb-4">
                 <label for="eventType" class="block text-gray-700 text-sm font-bold mb-2">Event Type:</label>
-                <select id="eventType" name="eventType" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <select id="eventType" name="eventType" class="inline-block w-1/6 bg-white border border-gray-300 text-gray-700 rounded leading-tight outline-none focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
                     <option value="pageview">PageView</option>
                     <option value="email-open">Email-Open</option>
                     <option value="other">Other</option>

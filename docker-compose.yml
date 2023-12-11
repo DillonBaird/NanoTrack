@@ -7,11 +7,11 @@ services:
       dockerfile: Dockerfile
     image: nanotrack:v1.0
     ports:
-      - "3050:3050"
+      - "3050:80"
     environment:
       - NODE_ENV=production
       - MONGO_URI=mongodb://nanotrack:nanotrack@mongodb:27017/nanotrack  # Use the hostname "mongodb" if using the mongodb in this compose
-      - PORT=3050
+      - PORT=80
       - DB_TYPE=mongodb
       # - DB_TYPE=flatfile #only recommended for testing
       - USERNAME=nanotrack
@@ -27,8 +27,6 @@ services:
     volumes:
       - mongodb_data:/data/db
       - ./mongo-init-scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-    ports:
-      - "27017:27017"
 
 volumes:
   mongodb_data:  # Define a volume to persist MongoDB data

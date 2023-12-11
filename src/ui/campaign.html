@@ -159,6 +159,17 @@
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
         }
+        #eventType {
+            height: 2.5rem; /* Match the height with other inputs */
+            padding: 0.5rem 1rem; /* Padding for text */
+            -webkit-appearance: none; /* Remove default styling */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23999" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center; /* Position for arrow */
+            background-size: 1.5em;
+        }
         
     </style>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -182,7 +193,7 @@
         <a href="/campaigns" class="test-lg font-medium mb-4 block"><i class="fa fa-arrow-left" aria-hidden="true"></i>
             Back To Campaigns</a>
         <div class="card bg-white p-4 rounded-lg border relative">
-            <h1 class="text-3xl font-bold capitalize mb-6" id="title">Campaign</h1>
+            <h1 class="text-3xl font-bold capitalize my-4 mb-6 pl-4" id="title">Campaign</h1>
 
             <div id="campaignDetails">
 
