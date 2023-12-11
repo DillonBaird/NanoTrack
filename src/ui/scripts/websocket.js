@@ -14,5 +14,4 @@ ws.onmessage = function (event) {
     let processedData = processTrackingDataItem(newData);
     trackingData.unshift(processedData);
     applyFiltersAndRefresh();
-    fetchChartData();
 };
