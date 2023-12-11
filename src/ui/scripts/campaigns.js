@@ -237,45 +237,54 @@ function deleteCampaign(campaignId) {
 function generateTracking(campaignId) {
     // Create and show a modal with dropdowns for event type and optional campaign ID input
     const modal = document.createElement('div');
-    modal.className = 'tracking-modal'; // Add classes for styling
+    modal.className = 'tracking-modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full'; // Tailwind classes for modal
+
     let modalContentHTML = `
-        <div class="modal-content relative w-1/2">
-            <h2 class="mb-4 text-lg font-medium">Generate Tracking URL and Embed Code</h2>
-            <label for="eventType">Event Type:</label>
-            <select id="eventType" name="eventType">
-                <option value="pageview">PageView</option>
-                <option value="email-open">Email-Open</option>
-                <option value="other">Other</option>
-                <!-- Add other event types as needed -->
-            </select>
-            <!-- Hidden input field for custom event type -->
-        <input type="text" id="customEventType" name="customEventType" class="hidden border-2 border-gray-300 rounded py-2 px-4 mb-0 mt-2 w-full" placeholder="Enter custom event type"/>
+        <div class="modal-content bg-white p-6 mx-auto rounded-lg shadow-lg relative min-w-max top-20">
+            <h2 class="text-xl font-semibold mb-4">Generate Tracking URL and Embed Code</h2>
+            <div class="mb-4">
+                <label for="eventType" class="block text-gray-700 text-sm font-bold mb-2">Event Type:</label>
+                <select id="eventType" name="eventType" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="pageview">PageView</option>
+                    <option value="email-open">Email-Open</option>
+                    <option value="other">Other</option>
+                    <!-- Add other event types as needed -->
+                </select>
+                <input type="text" id="customEventType" name="customEventType" class="hidden mt-3 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter custom event type"/>
+            </div>
     `;
 
     // Add campaign ID input field if campaignId is not provided
     if (!campaignId) {
         modalContentHTML += `
-            <label for="campaignIdInput" class="block mt-4">Campaign ID:</label>
-            <input type="text" id="campaignIdInput" name="campaignIdInput" class="border-2 border-gray-300 rounded py-2 px-4 mb-4 w-full" placeholder="Enter campaign name"/>
+            <div class="mb-4">
+                <label for="campaignIdInput" class="block text-gray-700 text-sm font-bold mb-2">Campaign ID:</label>
+                <input type="text" value="my new campaign" id="campaignIdInput" name="campaignIdInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter campaign name"/>
+            </div>
         `;
     } else {
         modalContentHTML += `
-            <label for="campaignId" class="hidden">Campaign ID:</label>
-            <select id="campaignId" name="campaignId" class="hidden">
-                <option value="${campaignId}">${campaignId}</option>
-                <!-- Populate with other campaign IDs if needed -->
-            </select>
+            <div class="hidden">
+                <label for="campaignId">Campaign ID:</label>
+                <select id="campaignId" name="campaignId">
+                    <option value="${campaignId}">${campaignId}</option>
+                    <!-- Populate with other campaign IDs if needed -->
+                </select>
+            </div>
         `;
     }
 
     // Continue with the rest of the modal content
     modalContentHTML += `
-        
-
-        <p class="mt-6 mb-2">Generated Image URL:<br/><span id="generatedUrl"></span></p>
-        <p>Embed Code: <pre id="embedCode" class="text-sm"></pre></p>
-
-        <button onclick="closeModal()" class="absolute top-4 right-4">Close</button>
+        <div class="mt-4">
+            <p class="text-sm font-bold mb-2">Generated Image URL:</p>
+            <pre id="generatedUrl" class="text-sm bg-gray-100 rounded p-2"></pre>
+        </div>
+        <div class="mt-4">
+            <p class="text-sm font-bold mb-2">Embed Code:</p>
+            <pre id="embedCode" class="text-sm bg-gray-100 rounded p-2"></pre>
+        </div>
+        <button onclick="closeModal()" class="absolute top-2 right-2 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Close</button>
         </div>
     `;
 
@@ -329,15 +338,31 @@ function updateTrackingInfo() {
         // Generate URL based on selected values
         const baseUrl = host + '/track';
         const generatedUrl = `${baseUrl}/${eventType}.gif?campaignID=${campaignId}`;
+        const generatedUrlStyled = `${baseUrl}/<strong>${eventType}</strong>.gif?campaignID=<strong>${campaignId}</strong>`;
+        const generatedImgPath = `<img src="${generatedUrlStyled}" alt="NanoTrack" />`;
 
-        document.getElementById('generatedUrl').textContent = generatedUrl;
-        document.getElementById('embedCode').textContent = `<img src="${generatedUrl}" alt="NanoTrack" />`;
+        document.getElementById('generatedUrl').innerHTML = generatedUrlStyled;
+        document.getElementById('embedCode').innerHTML = escapeHtml(generatedImgPath);
     } else {
         // Clear the displayed URL and embed code if campaignId is not available
         document.getElementById('generatedUrl').textContent = '';
         document.getElementById('embedCode').textContent = '';
     }
 }
+
+function escapeHtml(unsafe)
+{
+    return unsafe
+         .replaceAll("<strong>", "((strong))")
+         .replaceAll("</strong>", "((/strong))")
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;")
+         .replaceAll("((strong))", "<strong>")
+         .replaceAll("((/strong))", "</strong>");
+ }
 
 
 function closeModal() {

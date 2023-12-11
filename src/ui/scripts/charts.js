@@ -4,11 +4,20 @@ function updateChart(data) {
     const chartElement = document.getElementById('dataChart');
 
     if (chartElement) {
+        const chartElement = document.getElementById('dataChart');
+        if (!chartElement) return;
+
         const ctx = chartElement.getContext('2d');
 
-        // Extract labels (IPs) and values (counts) from the data
-        let labels = data.map(item => item.ip?.replace('::ffff:','').replace('::1','localhost'));
-        let values = data.map(item => item.count);
+        // Process the passed data for the chart
+        let ipCounts = data.reduce((acc, item) => {
+            const ip = item.geo?.ip?.replace('::ffff:', '').replace('::1', 'localhost') || 'Unknown';
+            acc[ip] = (acc[ip] || 0) + 1;
+            return acc;
+        }, {});
+
+        let labels = Object.keys(ipCounts);
+        let values = Object.values(ipCounts);
 
         // Destroy the old chart if it exists
         if (myChart) {
@@ -59,7 +68,7 @@ function updatePathChart(data) {
 
         // Process data for visits per path per day
         let pathCounts = data.reduce((acc, item) => {
-            let path = item.path || 'Unknown';
+            let path = item.path.replaceAll('.gif', '').replaceAll('/', '') || 'Unknown';
             let itemDate = new Date(item.decay);
             // Standardize the date format to YYYY-MM-DD
             let date = itemDate.toISOString().split('T')[0];

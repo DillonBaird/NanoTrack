@@ -1,5 +1,6 @@
-let ws = new WebSocket('ws://localhost:3050');
-//TODO: fix this to get current url
+// This will dynamically get the current host and port
+let wsHost = window.location.host;
+let ws = new WebSocket('ws://' + wsHost);
 
 ws.onopen = function () {
     console.log('WebSocket connection established');

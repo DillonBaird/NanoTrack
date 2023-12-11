@@ -15,7 +15,19 @@
     <script src="/scripts/dataProcessing.js"></script>
     <script src="/scripts/charts.js"></script>
     <script src="/scripts/uiHelpers.js"></script>
-    <script src="/scripts/filters.js"></script>
+    <style type="text/css">
+        #dateRangeSelector {
+            height: 2.5rem; /* Match the height with other inputs */
+            padding: 0.5rem 1rem; /* Padding for text */
+            -webkit-appearance: none; /* Remove default styling */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23999" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center; /* Position for arrow */
+            background-size: 1.5em;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100 flex flex-col min-h-screen">
@@ -48,20 +60,44 @@
             </div>
         </div>
 
-        <!-- Search and Filter Section -->
-        <div class="flex gap-4 my-4">
-            <input type="text" id="searchInput" class="flex-grow form-input px-4 py-2 border"
-                placeholder="Search for data...">
-            <button onclick="clearFilters()"
-                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Clear Filters</button>
+
+        <div class="flex flex-wrap gap-4 my-4 items-center">
+        
+            <!-- Date Range Selector -->
+            <select id="dateRangeSelector" class="inline-block w-1/6 bg-white border border-gray-300 text-gray-700 rounded leading-tight outline-none focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
+                <option value="">Select a Range</option>
+                <option value="today">Today</option>
+                <option value="last24Hours">Last 24 Hours</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="thisWeek">This Week</option>
+                <option value="last7Days">Last 7 Days</option>
+                <option value="thisMonth">This Month</option>
+                <option value="last30Days">Last 30 Days</option>
+                <option value="last60Days">Last 60 Days</option>
+                <option value="last90Days">Last 90 Days</option>
+                <option value="thisYear">This Year</option>
+                <option value="allTime">All Time</option>
+                <option value="custom">Custom Range</option>
+                <!-- ...other options... -->
+            </select>
+        
+            <!-- Custom Date Range Inputs -->
+            <div class="flex gap-2 hidden" id="customDateRange">
+                <input type="date" id="startDate" class="form-input px-4 py-2 border">
+                <input type="date" id="endDate" class="form-input px-4 py-2 border">
+            </div>
+
+
+            <!-- Search Bar -->
+            <input type="text" id="searchInput" class="flex-grow form-input px-4 py-2 border" placeholder="Search for data...">
+        
+            <!-- Clear Filters Button -->
+            <button onclick="clearFilters()" class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Clear Filters</button>
         </div>
-        <div class="flex gap-4 mb-4">
-            <input type="date" id="startDate" class="form-input px-4 py-2 border">
-            <input type="date" id="endDate" class="form-input px-4 py-2 border">
-        </div>
+        
 
         <!-- Data Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-auto max-h-[48dvh]">
             <table id="trackingData" class="table-auto w-full">
                 <thead>
                     <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
@@ -90,7 +126,7 @@
             </table>
         </div>
 
-        <div id="pagination" class="my-4">
+        <div id="pagination" class="my-4 hidden">
             <button onclick="changePage(-1)"
                 class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Previous</button>
             <span id="currentPage" class="mx-4 font-semibold">1</span>
@@ -106,6 +142,7 @@
         </div>
     </div>
 
+    <script src="/scripts/filters.js"></script>
 </body>
 
 </html>

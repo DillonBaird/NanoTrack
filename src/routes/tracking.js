@@ -16,7 +16,7 @@ module.exports = function (wss) {
             let data = await TrackingData.find({});
             let total = data.length;
 
-            data = data.slice(skip, skip + limit);
+            data = data.reverse().slice(skip, skip + limit);
 
             res.json({
                 total,
@@ -186,9 +186,8 @@ function reshapeData(data, keyName = 'path') {
 
 // Function to save tracking data and broadcast it to WebSocket clients
 async function saveAndBroadcastTrackingData(req, wss) {
-    const getRandomIP = () => ['74.115.209.58', '196.21.247.1'][Math.floor(Math.random() * 2)]; //req.ip
 
-    const geo = geoip.lookup(getRandomIP()) || {};
+    const geo = geoip.lookup(req.ip()) || {};
     const trackingInfo = {
         host: req.get('host'),
         referer: req.get('referer') || '',
@@ -203,7 +202,7 @@ async function saveAndBroadcastTrackingData(req, wss) {
         },
         language: req.acceptsLanguages(),
         geo: {
-            ip: getRandomIP(),
+            ip: req.ip(),
             ...geo
         },
         domain: req.hostname,

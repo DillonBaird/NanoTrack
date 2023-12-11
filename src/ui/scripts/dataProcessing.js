@@ -51,7 +51,7 @@ function applyFiltersAndRefresh() {
 
 
 
-function fetchData(page = 1, limit = 1000) {
+function fetchData(page = 1, limit = 50000) {
     return fetch(`/track/api/tracking-data?page=${page}&limit=${limit}`)
         .then(response => response.json())
         .then(data => {
@@ -64,17 +64,6 @@ function fetchData(page = 1, limit = 1000) {
             if (currentPageElement) {
                 currentPageElement.innerText = page;
             }
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-function fetchChartData() {
-    fetch('/track/api/chart-data')
-        .then(response => response.json())
-        .then(data => {
-            updateChart(data.ipCounts);
-            updatePathChart(data.pathCounts);
-            updateCampaignChart(data.campaignCounts);
         })
         .catch(error => console.error('Error:', error));
 }

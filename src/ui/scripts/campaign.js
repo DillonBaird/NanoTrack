@@ -384,6 +384,16 @@ function fetchCampaignData() {
     const title = document.getElementById('title');
     title.innerHTML = '🎯 ' + campaignId.replaceAll('-', ' ').replaceAll('_', ' ');
 
+    // Add more options icon with dropdown
+    const moreOptionsIcon = document.createElement('i');
+    moreOptionsIcon.className = 'text-lg fas fa-ellipsis-v absolute top-6 right-6 cursor-pointer';
+    moreOptionsIcon.addEventListener('click', function (event) {
+        event.stopPropagation();
+        showDropdownMenu(this, campaignId);
+    });
+
+    title.appendChild(moreOptionsIcon);
+
     if (campaignId) {
         fetch(`/track/api/campaign/${campaignId}`)
             .then(response => {
@@ -449,6 +459,188 @@ function displayCampaignData(data) {
     document.querySelector('.table-body-container').appendChild(bodyTable);
 
     initMap();
+}
+
+function generateTracking(campaignId) {
+    // Create and show a modal with dropdowns for event type and optional campaign ID input
+    const modal = document.createElement('div');
+    modal.className = 'tracking-modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full'; // Tailwind classes for modal
+
+    let modalContentHTML = `
+        <div class="modal-content bg-white p-6 mx-auto rounded-lg shadow-lg relative min-w-max top-20">
+            <h2 class="text-xl font-semibold mb-4">Generate Tracking URL and Embed Code</h2>
+            <div class="mb-4">
+                <label for="eventType" class="block text-gray-700 text-sm font-bold mb-2">Event Type:</label>
+                <select id="eventType" name="eventType" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="pageview">PageView</option>
+                    <option value="email-open">Email-Open</option>
+                    <option value="other">Other</option>
+                    <!-- Add other event types as needed -->
+                </select>
+                <input type="text" id="customEventType" name="customEventType" class="hidden mt-3 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter custom event type"/>
+            </div>
+    `;
+
+    // Add campaign ID input field if campaignId is not provided
+    if (!campaignId) {
+        modalContentHTML += `
+            <div class="mb-4">
+                <label for="campaignIdInput" class="block text-gray-700 text-sm font-bold mb-2">Campaign ID:</label>
+                <input type="text" value="my new campaign" id="campaignIdInput" name="campaignIdInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter campaign name"/>
+            </div>
+        `;
+    } else {
+        modalContentHTML += `
+            <div class="hidden">
+                <label for="campaignId">Campaign ID:</label>
+                <select id="campaignId" name="campaignId">
+                    <option value="${campaignId}">${campaignId}</option>
+                    <!-- Populate with other campaign IDs if needed -->
+                </select>
+            </div>
+        `;
+    }
+
+    // Continue with the rest of the modal content
+    modalContentHTML += `
+        <div class="mt-4">
+            <p class="text-sm font-bold mb-2">Generated Image URL:</p>
+            <pre id="generatedUrl" class="text-sm bg-gray-100 rounded p-2"></pre>
+        </div>
+        <div class="mt-4">
+            <p class="text-sm font-bold mb-2">Embed Code:</p>
+            <pre id="embedCode" class="text-sm bg-gray-100 rounded p-2"></pre>
+        </div>
+        <button onclick="closeModal()" class="absolute top-2 right-2 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Close</button>
+        </div>
+    `;
+
+    modal.innerHTML = modalContentHTML;
+    document.body.appendChild(modal);
+
+    // Add event listeners and initial update
+    const eventTypeDropdown = document.getElementById('eventType');
+    const customEventTypeInput = document.getElementById('customEventType');
+    const campaignIdElement = campaignId ? document.getElementById('campaignId') : document.getElementById('campaignIdInput');
+
+    // Update to show/hide the custom event type input based on selection
+    eventTypeDropdown.addEventListener('change', () => {
+        if (eventTypeDropdown.value === 'other') {
+            customEventTypeInput.classList.remove('hidden'); // Show the custom input
+            customEventTypeInput.value = ''; // Clear previous value
+        } else {
+            customEventTypeInput.classList.add('hidden'); // Hide the custom input
+        }
+        updateTrackingInfo();
+    });
+
+    customEventTypeInput.addEventListener('input', updateTrackingInfo);
+    if (!campaignId) {
+        campaignIdElement.addEventListener('input', updateTrackingInfo);
+    }
+
+    // Initial update
+    updateTrackingInfo();
+}
+
+function updateTrackingInfo() {
+    const host = window.location.protocol + "//" + window.location.host;
+    const eventTypeDropdown = document.getElementById('eventType');
+    let eventType = eventTypeDropdown.value;
+
+    // Get the campaign ID either from the provided variable or the input field
+    let campaignId = document.getElementById('campaignId') ? document.getElementById('campaignId').value : document.getElementById('campaignIdInput').value;
+
+    campaignId = campaignId.replaceAll(' ', '-')
+
+    const customEventTypeInput = document.getElementById('customEventType');
+
+    if (eventType === 'other' && customEventTypeInput.value) {
+        eventType = customEventTypeInput.value.replaceAll(' ', '-');
+    }
+
+    // Only generate URL if campaignId is available
+    if (campaignId) {
+        // Generate URL based on selected values
+        const baseUrl = host + '/track';
+        const generatedUrl = `${baseUrl}/${eventType}.gif?campaignID=${campaignId}`;
+        const generatedUrlStyled = `${baseUrl}/<strong>${eventType}</strong>.gif?campaignID=<strong>${campaignId}</strong>`;
+        const generatedImgPath = `<img src="${generatedUrlStyled}" alt="NanoTrack" />`;
+
+        document.getElementById('generatedUrl').innerHTML = generatedUrlStyled;
+        document.getElementById('embedCode').innerHTML = escapeHtml(generatedImgPath);
+    } else {
+        // Clear the displayed URL and embed code if campaignId is not available
+        document.getElementById('generatedUrl').textContent = '';
+        document.getElementById('embedCode').textContent = '';
+    }
+}
+
+function escapeHtml(unsafe) {
+    return unsafe
+        .replaceAll("<strong>", "((strong))")
+        .replaceAll("</strong>", "((/strong))")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+        .replaceAll("((strong))", "<strong>")
+        .replaceAll("((/strong))", "</strong>");
+}
+
+
+function closeModal() {
+    // Close and remove the modal
+    const modal = document.querySelector('.tracking-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function showDropdownMenu(iconElement, campaignId) {
+    // Close any already open dropdowns
+    closeAllDropdowns();
+
+    // Create dropdown menu
+    const dropdown = document.createElement('div');
+    dropdown.className = 'dropdown-menu text-sm font-normal rounded';
+    dropdown.innerHTML = `
+        <ul>
+            <li class="dropdown-item" onclick="generateTracking('${campaignId}')">Generate Tracking Image</li>
+            <li class="dropdown-item" onclick="deleteCampaign('${campaignId}')">Delete Campaign & Data</li>
+        </ul>
+    `;
+    dropdown.style.position = 'absolute';
+    dropdown.style.top = `${iconElement.offsetTop + iconElement.offsetHeight}px`;
+    dropdown.style.right = '10px';
+
+    // Append dropdown to the card header (or a suitable parent)
+    const parentElement = iconElement.parentElement; // Adjust this if necessary
+    parentElement.appendChild(dropdown);
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', closeAllDropdowns);
+}
+
+function closeAllDropdowns() {
+    document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+        dropdown.remove();
+    });
+}
+
+function deleteCampaign(campaignId) {
+    const isConfirmed = confirm("Are you sure? This will delete all existing tracking data for this campaign and cannot be undone.");
+
+    if (isConfirmed) {
+        fetch(`/track/api/campaign/${campaignId}`, { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                location.replace('/campaigns')
+            })
+            .catch(error => console.error('Error:', error));
+    }
 }
 
 function processDataForChart(data) {

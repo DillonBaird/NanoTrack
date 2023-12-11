@@ -131,7 +131,6 @@ function getCountryFlagIcon(countryCode) {
 
 document.addEventListener('DOMContentLoaded', function () {
     fetchData();
-    fetchChartData();
 });
 
 function changePage(increment) {
