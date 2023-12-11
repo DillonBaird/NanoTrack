@@ -1,7 +1,7 @@
 # 📊 NanoTrack: 1x1 Nano-Size Spy-Pixel Analytics
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Docker Pulls](https://img.shields.io/docker/pulls/nanotrack)
+[![Build and Push Docker Image](https://github.com/DillonBaird/NanoTrack/actions/workflows/docker-build.yml/badge.svg?branch=master)](https://github.com/DillonBaird/NanoTrack/actions/workflows/docker-build.yml)
+![Docker Pulls](https://img.shields.io/docker/pulls/nanotrack/nanotrack)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## 🌟 Introduction
