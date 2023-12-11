@@ -360,4 +360,3 @@ Stay updated with our [Changelog](CHANGELOG.md).
 
 ## 🛠 Troubleshooting
 Common issues and their solutions in our [Troubleshooting Guide](TROUBLESHOOTING.md).
-
