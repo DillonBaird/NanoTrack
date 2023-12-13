@@ -107,6 +107,14 @@ module.exports = function (wss) {
         try {
             const trackingData = await saveAndBroadcastTrackingData(req, wss);
 
+            // Check if the request is for click tracking and has a redirectURL
+            if (req.path === '/click.gif' && req.query.redirectURL) {
+                // Log the tracking data (already done in saveAndBroadcastTrackingData)
+                
+                // Redirect to the specified URL
+                return res.redirect(req.query.redirectURL);
+            }
+
             if (!req.headers.referer) {
                 let readableTrackingData = '';
                 Object.keys(trackingData).forEach(key => {
@@ -188,6 +196,18 @@ function reshapeData(data, keyName = 'path') {
 async function saveAndBroadcastTrackingData(req, wss) {
 
     const geo = geoip.lookup(req.ip) || {};
+    let requestIP = req.ip;
+
+    // Check if ANONYMIZE_IPS is set to true and the input IP is valid
+    if (process.env.ANONYMIZE_IPS === 'true') {
+        requestIP = '';
+        
+        // Update the geo object with the anonymized IP
+        geo.ip = requestIP;
+    }
+
+
+
     const trackingInfo = {
         host: req.get('host'),
         referer: req.get('referer') || '',
@@ -202,7 +222,7 @@ async function saveAndBroadcastTrackingData(req, wss) {
         },
         language: req.acceptsLanguages(),
         geo: {
-            ip: req.ip,
+            ip: requestIP,
             ...geo
         },
         domain: req.hostname,
@@ -212,6 +232,11 @@ async function saveAndBroadcastTrackingData(req, wss) {
         httpVersion: req.httpVersion
     };
     const trackingData = { ...trackingInfo, campaignID: req.query.campaignID };
+
+    // Check if the DNT header is set to "1" (indicating the user's preference not to be tracked)
+    if (req.headers['dnt'] === '1') {
+        return trackingData; // Skip saving tracking data
+    }
 
     // Save tracking data
     await TrackingData.save(trackingData);
