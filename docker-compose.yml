@@ -5,9 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: nanotrack:v1.0
+    image: nanotrack:latest
     ports:
-      - "3050:80"
+      - "3000:80"
     environment:
       - NODE_ENV=production
       - MONGO_URI=mongodb://nanotrack:nanotrack@mongodb:27017/nanotrack  # Use the hostname "mongodb" if using the mongodb in this compose
