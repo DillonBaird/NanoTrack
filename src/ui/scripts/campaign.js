@@ -265,6 +265,7 @@ function createCampaignDataTable(data) {
     // Add headers to the header table
     const headers = ['Event', 'referrer', 'IP', 'Browser', 'Device', 'OS', 'Country', 'Region', 'City', 'Timezone', 'Language', 'Timestamp']
     const headerRow = document.createElement('tr');
+    headerRow.className = 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal'
     headers.forEach(headerText => {
         const header = document.createElement('th');
         header.textContent = headerText;
@@ -276,7 +277,7 @@ function createCampaignDataTable(data) {
     // Add data rows to the table
     data.reverse().forEach((item, index) => {
         const row = document.createElement('tr');
-        row.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-100'; // Alternate row colors
+        row.className = index % 2 === 0 ? 'bg-white dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-500'; // Alternate row colors
         row.innerHTML = `
             <td class="px-4 py-2 whitespace-nowrap">${eventFromPath(item.path) || ''}</td>
             <td class="px-4 py-2 whitespace-nowrap">${item.referrer || 'direct'}</td>
@@ -340,7 +341,7 @@ function initMap() {
                 const countryName = feature.properties.name;
                 return countryCounts[countryName] || 0;
             },
-            scale: ['#f7fbff', '#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#08519c', '#08306b', '#041845'], // Define your color scale with 10 shades of blue
+            scale: ['#f7fbff', '#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#08519c', '#08306b', '#041845', '#c6dbef'], // Define your color scale with 10 shades of blue
             steps: 10, // Define the number of color steps
             mode: 'q', // Define the mode (quantile, equidistant, k-means)
             style: {
@@ -479,10 +480,15 @@ function generateTracking(campaignId) {
                 <select id="eventType" name="eventType" class="inline-block w-1/6 bg-white border border-gray-300 text-gray-700 rounded leading-tight outline-none focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
                     <option value="pageview">PageView</option>
                     <option value="email-open">Email-Open</option>
+                    <option value="click">Click</option>
                     <option value="other">Other</option>
                     <!-- Add other event types as needed -->
                 </select>
                 <input type="text" id="customEventType" name="customEventType" class="hidden mt-3 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter custom event type"/>
+                <div id="redirectUrlInput" class="mb-4 hidden">
+                    <label for="redirectUrl" class="block text-gray-700 text-sm font-bold mb-2">Redirect URL:</label>
+                    <input type="text" id="redirectUrl" name="redirectUrl" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter redirect URL (ex. https://google.com)"/>
+                </div>
             </div>
     `;
 
@@ -508,11 +514,11 @@ function generateTracking(campaignId) {
 
     // Continue with the rest of the modal content
     modalContentHTML += `
-        <div class="mt-4">
-            <p class="text-sm font-bold mb-2">Generated Image URL:</p>
+        <div class="mt-4 text-sm">
+            <p class="text-sm font-bold mb-2">Generated URL:</p>
             <pre id="generatedUrl" class="text-sm bg-gray-100 rounded p-2"></pre>
         </div>
-        <div class="mt-4">
+        <div class="mt-4 text-sm">
             <p class="text-sm font-bold mb-2">Embed Code:</p>
             <pre id="embedCode" class="text-sm bg-gray-100 rounded p-2"></pre>
         </div>
@@ -526,20 +532,26 @@ function generateTracking(campaignId) {
     // Add event listeners and initial update
     const eventTypeDropdown = document.getElementById('eventType');
     const customEventTypeInput = document.getElementById('customEventType');
+    const redirectUrlInput = document.getElementById('redirectUrl');
     const campaignIdElement = campaignId ? document.getElementById('campaignId') : document.getElementById('campaignIdInput');
 
     // Update to show/hide the custom event type input based on selection
     eventTypeDropdown.addEventListener('change', () => {
         if (eventTypeDropdown.value === 'other') {
-            customEventTypeInput.classList.remove('hidden'); // Show the custom input
-            customEventTypeInput.value = ''; // Clear previous value
+            customEventTypeInput.classList.remove('hidden');
+            document.getElementById('redirectUrlInput').classList.add('hidden');
+        } else if (eventTypeDropdown.value === 'click') {
+            document.getElementById('redirectUrlInput').classList.remove('hidden');
+            customEventTypeInput.classList.add('hidden');
         } else {
-            customEventTypeInput.classList.add('hidden'); // Hide the custom input
+            customEventTypeInput.classList.add('hidden');
+            document.getElementById('redirectUrlInput').classList.add('hidden');
         }
         updateTrackingInfo();
     });
 
     customEventTypeInput.addEventListener('input', updateTrackingInfo);
+    redirectUrlInput.addEventListener('input', updateTrackingInfo);
     if (!campaignId) {
         campaignIdElement.addEventListener('input', updateTrackingInfo);
     }
@@ -560,6 +572,12 @@ function updateTrackingInfo() {
 
     const customEventTypeInput = document.getElementById('customEventType');
 
+    const redirectUrlInput = document.getElementById('redirectUrl');
+    let redirectUrl = '';
+    if (eventType === 'click') {
+        redirectUrl = redirectUrlInput.value;
+    }
+
     if (eventType === 'other' && customEventTypeInput.value) {
         eventType = customEventTypeInput.value.replaceAll(' ', '-');
     }
@@ -570,10 +588,17 @@ function updateTrackingInfo() {
         const baseUrl = host + '/track';
         const generatedUrl = `${baseUrl}/${eventType}.gif?campaignID=${campaignId}`;
         const generatedUrlStyled = `${baseUrl}/<strong>${eventType}</strong>.gif?campaignID=<strong>${campaignId}</strong>`;
+        const generatedUrlStyledWithRedirect = `${baseUrl}/<strong>${eventType}</strong>?campaignID=<strong>${campaignId}</strong>&redirectURL=<strong>${redirectUrl}</strong>`
         const generatedImgPath = `<img src="${generatedUrlStyled}" alt="NanoTrack" />`;
+        const generatedLinkPath = `<a href="${generatedUrlStyledWithRedirect}">Some Link Text</a>`;
 
-        document.getElementById('generatedUrl').innerHTML = generatedUrlStyled;
-        document.getElementById('embedCode').innerHTML = escapeHtml(generatedImgPath);
+        if (eventType === 'click') {
+            document.getElementById('generatedUrl').innerHTML = generatedUrlStyledWithRedirect;
+            document.getElementById('embedCode').innerHTML = escapeHtml(generatedLinkPath);
+        } else {
+            document.getElementById('generatedUrl').innerHTML = generatedUrlStyled;
+            document.getElementById('embedCode').innerHTML = escapeHtml(generatedImgPath);
+        }
     } else {
         // Clear the displayed URL and embed code if campaignId is not available
         document.getElementById('generatedUrl').textContent = '';
@@ -681,8 +706,8 @@ function generateChart(eventData) {
             datasets: [{
                 label: 'Events per Hour',
                 data: counts,
-                backgroundColor: 'rgba(33, 41, 54, 0.2)',
-                borderColor: 'rgba(33, 41, 54, 1)',
+                backgroundColor: '#BFDBFE',
+                borderColor: '#BFDBFE',
                 borderWidth: 1
             }]
         },
@@ -815,18 +840,18 @@ function populateList(containerId, counts, header1, header2, dataType) {
 
         if (percentage < 100) {
             // Apply a softer edge for percentages less than 100
-            gradientStart = Math.max(0, percentage);
-            gradientEnd = Math.min(100, parseFloat(percentage) + 10);
+            gradientStart = Math.max(0, parseFloat(percentage));
+            gradientEnd = Math.min(100, parseFloat(percentage + 5));
         } else {
             // For 100%, fill the entire cell
             gradientStart = 100;
             gradientEnd = 100;
         }
 
-        const gradientStyle = `background: linear-gradient(to right, rgba(107, 116, 142, .2) ${gradientStart}%, #fff ${gradientEnd}%, #fff 100%);`;
+        const tailwindGradientClass = `bg-gradient-to-r from-blue-100 dark:from-gray-600 from-${Math.ceil(gradientStart / 5) * 5}% to-white dark:to-gray-900 to-${Math.ceil(gradientEnd / 5) * 5}%` //`from-blue-gray-400 from-10% via-blue-gray-400 to-white`
 
 
-        tableContent += `<tr><td class="capitalize">${displayKey}</td><td style="${gradientStyle}"><strong>${value}</strong> | ${percentage}%</td></tr>`;
+        tableContent += `<tr><td class="capitalize">${displayKey}</td><td class="${tailwindGradientClass}"><strong>${value}</strong> | ${percentage}%</td></tr>`;
     }
 
     tableContent += '</tbody></table>';

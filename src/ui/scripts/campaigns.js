@@ -18,7 +18,7 @@ function renderCampaignTables(data) {
         const createButton = document.createElement('button');
         createButton.id = 'createCampaignBtn';
         createButton.textContent = '+ New Campaign';
-        createButton.className = 'py-2 px-4 rounded-xl bg-transparent font-medium hover:bg-gray-700 text-gray-800 hover:text-white border border-gray-800 hover:border-transparent absolute right-4 rounded cursor-pointer ml-4';
+        createButton.className = 'py-2 px-4 rounded-xl bg-transparent font-medium hover:bg-gray-700 text-gray-800 dark:text-gray-200 hover:text-white border dark:border-gray-200 border-gray-800 hover:border-transparent absolute right-4 rounded cursor-pointer ml-4';
 
         // Event listener for the button
         createButton.addEventListener('click', () => {
@@ -54,13 +54,13 @@ function showNoCampaignUI() {
 function createTableForCampaign(campaignId, data) {
     // Create a card container for each campaign
     const cardContainer = document.createElement('div');
-    cardContainer.className = 'bg-white shadow overflow-hidden sm:rounded-lg my-8';
+    cardContainer.className = 'bg-white dark:bg-gray-900 shadow overflow-hidden sm:rounded-lg my-8 pt-2';
     cardContainer.id = campaignId;
 
     // Add a card header
     const cardHeader = document.createElement('div');
     cardHeader.className = 'px-4 py-4 sm:px-6 relative';
-    cardHeader.innerHTML = `<h3 class="text-2xl leading-6 font-medium text-gray-900 capitalize">🎯 <a class="hover:underline" href="/campaigns/${campaignId}">${campaignId.replaceAll('-',' ').replaceAll('_',' ')}</a></h3>`;
+    cardHeader.innerHTML = `<h3 class="text-2xl leading-6 font-medium text-gray-900 dark:text-white capitalize">🎯 <a class="hover:underline" href="/campaigns/${campaignId}">${campaignId.replaceAll('-',' ').replaceAll('_',' ')}</a></h3>`;
     
     // Create the View Details button
     const viewDetailsButton = document.createElement('button');
@@ -129,12 +129,12 @@ function createTableForCampaign(campaignId, data) {
     const tableWrapper = document.createElement('div');
     tableWrapper.className = 'overflow-x-auto';
     const table = document.createElement('table');
-    table.className = 'min-w-full divide-y divide-gray-200';
+    table.className = 'min-w-full divide-y divide-gray-200 dark:divide-gray-600';
 
     // Define your column headers based on the structure in populateTable
     const headers = ['Event', 'referrer', 'IP', 'Browser', 'Device', 'OS', 'Country', 'Region', 'City', 'Timezone', 'Language', 'Timestamp'];
     const headerRow = document.createElement('tr');
-    headerRow.className = 'bg-gray-100 text-gray-600 uppercase text-sm leading-normal'; // Styling for header row
+    headerRow.className = 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal'; // Styling for header row
     headers.forEach(headerText => {
         const header = document.createElement('th');
         header.className = 'py-3 px-6 text-left whitespace-nowrap'; // Styling for each header
@@ -149,7 +149,7 @@ function createTableForCampaign(campaignId, data) {
     // Populate table rows with sorted and limited data
     recentData.forEach((item, index) => {
         const row = document.createElement('tr');
-        row.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-100'; // Alternate row colors
+        row.className = index % 2 === 0 ? 'bg-white dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-500'; // Alternate row colors
         row.innerHTML = `
             <td class="px-4 py-2 whitespace-nowrap">${eventFromPath(item.path) || ''}</td>
             <td class="px-4 py-2 whitespace-nowrap">${item.referrer || 'direct'}</td>
@@ -248,10 +248,15 @@ function generateTracking(campaignId) {
                 <select id="eventType" name="eventType" class="inline-block w-1/6 bg-white border border-gray-300 text-gray-700 rounded leading-tight outline-none focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
                     <option value="pageview">PageView</option>
                     <option value="email-open">Email-Open</option>
+                    <option value="click">Click</option>
                     <option value="other">Other</option>
                     <!-- Add other event types as needed -->
                 </select>
                 <input type="text" id="customEventType" name="customEventType" class="hidden mt-3 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter custom event type"/>
+                <div id="redirectUrlInput" class="mb-4 hidden">
+                    <label for="redirectUrl" class="block text-gray-700 text-sm font-bold mb-2">Redirect URL:</label>
+                    <input type="text" id="redirectUrl" name="redirectUrl" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter redirect URL (ex. https://google.com)"/>
+                </div>
             </div>
     `;
 
@@ -259,7 +264,7 @@ function generateTracking(campaignId) {
     if (!campaignId) {
         modalContentHTML += `
             <div class="mb-4">
-                <label for="campaignIdInput" class="block text-gray-700 text-sm font-bold mb-2">Campaign ID:</label>
+                <label for="campaignIdInput" class="block text-gray-700 text-sm font-bold mb-2">Campaign ID:<div class="block text-caption font-light italic">A Campaign ID can be anything you'd like. It could be a domain you're tracking, or an email marketing campaign, or even a UA-ID to be able to correlate to GA data.</div></label>
                 <input type="text" value="my new campaign" id="campaignIdInput" name="campaignIdInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter campaign name"/>
             </div>
         `;
@@ -278,7 +283,7 @@ function generateTracking(campaignId) {
     // Continue with the rest of the modal content
     modalContentHTML += `
         <div class="mt-4">
-            <p class="text-sm font-bold mb-2">Generated Image URL:</p>
+            <p class="text-sm font-bold mb-2">Generated URL:</p>
             <pre id="generatedUrl" class="text-sm bg-gray-100 rounded p-2"></pre>
         </div>
         <div class="mt-4">
@@ -300,10 +305,14 @@ function generateTracking(campaignId) {
     // Update to show/hide the custom event type input based on selection
     eventTypeDropdown.addEventListener('change', () => {
         if (eventTypeDropdown.value === 'other') {
-            customEventTypeInput.classList.remove('hidden'); // Show the custom input
-            customEventTypeInput.value = ''; // Clear previous value
+            customEventTypeInput.classList.remove('hidden');
+            document.getElementById('redirectUrlInput').classList.add('hidden');
+        } else if (eventTypeDropdown.value === 'click') {
+            document.getElementById('redirectUrlInput').classList.remove('hidden');
+            customEventTypeInput.classList.add('hidden');
         } else {
-            customEventTypeInput.classList.add('hidden'); // Hide the custom input
+            customEventTypeInput.classList.add('hidden');
+            document.getElementById('redirectUrlInput').classList.add('hidden');
         }
         updateTrackingInfo();
     });
@@ -330,6 +339,12 @@ function updateTrackingInfo() {
 
     const customEventTypeInput = document.getElementById('customEventType');
 
+    const redirectUrlInput = document.getElementById('redirectUrl');
+    let redirectUrl = '';
+    if (eventType === 'click') {
+        redirectUrl = redirectUrlInput.value;
+    }
+
     if (eventType === 'other' && customEventTypeInput.value) {
         eventType = customEventTypeInput.value.replaceAll(' ','-');
     }
@@ -340,10 +355,17 @@ function updateTrackingInfo() {
         const baseUrl = host + '/track';
         const generatedUrl = `${baseUrl}/${eventType}.gif?campaignID=${campaignId}`;
         const generatedUrlStyled = `${baseUrl}/<strong>${eventType}</strong>.gif?campaignID=<strong>${campaignId}</strong>`;
+        const generatedUrlStyledWithRedirect = `${baseUrl}/<strong>${eventType}</strong>?campaignID=<strong>${campaignId}</strong>&redirectURL=<strong>${redirectUrl}</strong>`
         const generatedImgPath = `<img src="${generatedUrlStyled}" alt="NanoTrack" />`;
+        const generatedLinkPath = `<a href="${generatedUrlStyledWithRedirect}">Some Link Text</a>`;
 
-        document.getElementById('generatedUrl').innerHTML = generatedUrlStyled;
-        document.getElementById('embedCode').innerHTML = escapeHtml(generatedImgPath);
+        if (eventType === 'click') {
+            document.getElementById('generatedUrl').innerHTML = generatedUrlStyledWithRedirect;
+            document.getElementById('embedCode').innerHTML = escapeHtml(generatedLinkPath);
+        } else {
+            document.getElementById('generatedUrl').innerHTML = generatedUrlStyled;
+            document.getElementById('embedCode').innerHTML = escapeHtml(generatedImgPath);
+        }
     } else {
         // Clear the displayed URL and embed code if campaignId is not available
         document.getElementById('generatedUrl').textContent = '';

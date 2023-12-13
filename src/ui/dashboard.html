@@ -30,8 +30,8 @@
     </style>
 </head>
 
-<body class="bg-gray-100 flex flex-col min-h-screen">
-    <div class="bg-gray-800 py-4">
+<body class="bg-gray-100 dark:bg-gray-950 flex flex-col min-h-screen dark:text-gray-200">
+    <div class="bg-gray-800 dark:bg-gray-950 pt-4 py-4">
         <div class="container mx-auto text-center text-white">
             <div id="header"></div>
         </div>
@@ -41,19 +41,19 @@
         <!-- Charts and Data Display Section -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Data Chart -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                 <div class="chart-container">
                     <canvas id="dataChart" class="w-full"></canvas>
                 </div>
             </div>
             <!-- Campaign Chart -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                 <div class="chart-container">
                     <canvas id="campaignChart" class="w-full"></canvas>
                 </div>
             </div>
             <!-- Path Chart -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                 <div class="chart-container">
                     <canvas id="pathChart" class="w-full"></canvas>
                 </div>
@@ -64,7 +64,7 @@
         <div class="flex flex-wrap gap-4 my-4 items-center">
         
             <!-- Date Range Selector -->
-            <select id="dateRangeSelector" class="inline-block w-1/6 bg-white border border-gray-300 text-gray-700 rounded leading-tight outline-none focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
+            <select id="dateRangeSelector" class="inline-block w-1/6 bg-white dark:bg-gray-700 dark:border-gray-500 border border-gray-300 text-gray-700 rounded leading-tight dark:text-gray-200 appearance-none">
                 <option value="">Select a Range</option>
                 <option value="today">Today</option>
                 <option value="last24Hours">Last 24 Hours</option>
@@ -83,13 +83,13 @@
         
             <!-- Custom Date Range Inputs -->
             <div class="flex gap-2 hidden" id="customDateRange">
-                <input type="date" id="startDate" class="form-input px-4 py-2 border">
-                <input type="date" id="endDate" class="form-input px-4 py-2 border">
+                <input type="date" id="startDate" class="form-input px-4 py-2 border dark:bg-gray-700 dark:border-gray-500">
+                <input type="date" id="endDate" class="form-input px-4 py-2 border dark:bg-gray-700 dark:border-gray-500">
             </div>
 
 
             <!-- Search Bar -->
-            <input type="text" id="searchInput" class="flex-grow form-input px-4 py-2 border" placeholder="Search for data...">
+            <input type="text" id="searchInput" class="flex-grow dark:bg-gray-700 dark:border-gray-500 form-input px-4 py-2 border rounded" placeholder="Search for data...">
         
             <!-- Clear Filters Button -->
             <button onclick="clearFilters()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Clear Filters</button>
@@ -100,7 +100,7 @@
         <div class="overflow-auto max-h-[48dvh]">
             <table id="trackingData" class="table-auto w-full">
                 <thead>
-                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                    <tr class="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal">
                         <th class="py-3 px-6 text-left whitespace-nowrap">Campaign</th>
                         <th class="py-3 px-6 text-left whitespace-nowrap">Event</th>
                         <th class="py-3 px-6 text-left whitespace-nowrap">referrer</th>
@@ -120,7 +120,7 @@
                         <th class="py-3 px-6 text-left whitespace-nowrap">HTTP Version</th>
                     </tr>
                 </thead>
-                <tbody class="text-gray-600 text-sm font-light">
+                <tbody class="text-gray-600 dark:text-gray-200 text-sm font-light">
                     <!-- Data will be populated here -->
                 </tbody>
             </table>
@@ -136,7 +136,7 @@
 
     </div>
 
-    <div class="bg-gray-800 py-4">
+    <div class="bg-gray-800 dark:bg-gray-950 py-4">
         <div class="container mx-auto text-center text-white text-sm">
             <div id="footer"></div>
         </div>

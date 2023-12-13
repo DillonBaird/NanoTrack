@@ -2,7 +2,7 @@ function createNavbar() {
     const currentPath = window.location.pathname;
 
     const navbar = `
-        <div class="custom-bg py-0">
+        <div class="py-0">
             <div class="container mx-auto text-center text-white">
                 <div class="flex items-center justify-between">
                     <a href="/dashboard" class="flex-none">

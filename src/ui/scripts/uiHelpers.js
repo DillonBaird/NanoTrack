@@ -16,12 +16,12 @@ function populateTable(data) {
                 }
             }
 
-            const rowClass = index % 2 === 0 ? 'bg-gray-100' : 'bg-gray-200';
+            const rowClass = index % 2 === 0 ? 'bg-white dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-500';
 
             let row = `<tr class="${rowClass}">
                     <td  class="px-4 py-2  whitespace-nowrap"><a class="underline hover:font-medium" href="/campaigns/${item.campaignID}">${item.campaignID}</a></td>
-                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${eventFromPath(item.path) || ''}</td>
-                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${item.referrer || 'direct'}</td>
+                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900" onclick="applyFilter(this)">${eventFromPath(item.path) || ''}</td>
+                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900" onclick="applyFilter(this)">${item.referrer || 'direct'}</td>
                     <td  class="px-4 py-2  whitespace-nowrap">${item.geo?.ip.replace('::ffff:','').replace('::1','localhost') || ''}</td>
                     <td  class="px-4 py-2  whitespace-nowrap">${getBrowserIcon(item.useragent?.browser)} ${item.useragent?.browser || ''} ${item.useragent?.version || ''}</td>
                     <td  class="px-4 py-2  whitespace-nowrap capitalize">${getDeviceIcon(item.useragent?.device)} ${item.useragent?.device || ''}</td>
@@ -32,10 +32,10 @@ function populateTable(data) {
                     <td  class="px-4 py-2  whitespace-nowrap">${item.geo.timezone || ''}</td>
                     <td  class="px-4 py-2  whitespace-nowrap capitalize">${item.language.join(', ') || ''}</td>
                     <td  class="px-4 py-2  whitespace-nowrap">${new Date(item.decay).toLocaleString() || ''}</td>
-                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${typeof item.params === 'string' ? Object.entries(JSON.parse(item.params)).map(([key, value]) => `${key}: ${value}`).join(', ') : item.params ? Object.entries(item.params).map(([key, value]) => `${key}: ${value}`).join(', ') : ''}</td>
-                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${item.acceptHeaders || ''}</td>
+                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900" onclick="applyFilter(this)">${typeof item.params === 'string' ? Object.entries(JSON.parse(item.params)).map(([key, value]) => `${key}: ${value}`).join(', ') : item.params ? Object.entries(item.params).map(([key, value]) => `${key}: ${value}`).join(', ') : ''}</td>
+                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900" onclick="applyFilter(this)">${item.acceptHeaders || ''}</td>
                     <td  class="px-4 py-2  whitespace-nowrap">${item.dnt ? '‼️' : ''}</td>
-                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300" onclick="applyFilter(this)">${item.httpVersion || ''}</td>
+                    <td  class="px-4 py-2  whitespace-nowrap cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900" onclick="applyFilter(this)">${item.httpVersion || ''}</td>
                 </tr>`;
             rowsHtml += row;
         });
@@ -123,9 +123,9 @@ function getOSIcon(osName) {
 
 function getCountryFlagIcon(countryCode) {
     if (!countryCode) return '';
-    if (countryCode === 'Unknown' ) return `<i class="fas fa-question mx-1"></i>`;
+    if (countryCode === 'Unknown' ) return `<i class="fas fa-question mx-1"></i>  `;
 
-    return `<span class="fi fi-${countryCode.toLowerCase()}"></span>`;
+    return `<span class="fi fi-${countryCode.toLowerCase()}"></span>  `;
 }
 
 
