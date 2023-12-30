@@ -13,37 +13,44 @@
 <body class="bg-gray-100 flex flex-col min-h-screen">
 
     <!-- Header -->
-    <div class="bg-gray-800 py-4">
+    <div class="bg-gradient-to-r from-gray-700 to-gray-900 py-6">
         <div class="container mx-auto text-center text-white">
-            <img src="logo.png" alt="NanoTrack Logo" class="mx-auto" style="max-height: 40px;">
+            <img src="logo.png" alt="NanoTrack Logo" class="mx-auto hover:scale-105 transition-transform duration-300" style="max-height: 60px;">
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="container mx-auto flex-grow flex justify-between items-center py-12 px-4 md:px-0">
         <!-- Login Form -->
-        <div class="w-full md:w-1/2 lg:w-1/3 bg-white shadow-md rounded-lg p-8">
+        <div class="w-full md:w-1/2 lg:w-1/3 bg-white shadow-xl rounded-xl p-10">
             <form action="/login" method="post">
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                        Username
+                        <i class="fa fa-user ml-2"></i>
+                    </label>
                     <input type="text" name="username" id="username" placeholder="Username" required
                         class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                 </div>
                 <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                        Password
+                        <i class="fa fa-lock ml-2"></i>
+                    </label>
                     <input type="password" name="password" id="password" placeholder="Password" required
                         class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                 </div>
                 <div class="flex items-center justify-between">
                     <button type="submit"
-                        class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline">Login</button>
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors duration-300">Login</button>
                 </div>
             </form>
         </div>
 
         <!-- Branding Content -->
         <div class="hidden md:block md:w-1/2 lg:w-1/3 text-center">
-            <h2 class="text-4xl mb-2">Nano-Size Analytics</h2>
+            <img src="nanotracker.png" class="w-1/2 my-4 mx-auto" />
+            <h2 class="text-4xl mb-2 text-gray-800">Nano-Size Analytics</h2>
             <p class="text-gray-700 text-sm">
                 Welcome to NanoTrack, the premier solution for nano-size analytics. Our platform offers real-time
                 insights, detailed reports, and user-friendly interfaces to help you understand your data better.
@@ -52,12 +59,12 @@
     </div>
 
     <!-- Footer -->
-    <div class="bg-gray-800 py-4 mt-auto">
+    <div class="bg-gradient-to-r from-gray-700 to-gray-900 py-6 mt-auto">
         <div class="container mx-auto text-center text-white text-xs">
             <div>
                 <a href="https://github.com/DillonBaird/NanoTrack" target="_blank"
-                    class="text-white font-bold">NanoTrack</a> - Made with ❤️ by <a href="https://DillonBaird.io"
-                    target="_blank" class="text-white font-bold">Dillon Baird</a>
+                    class="text-white font-bold hover:text-blue-300 transition-colors duration-300">NanoTrack</a> - Made with ❤️ by <a href="https://DillonBaird.io"
+                    target="_blank" class="text-white font-bold hover:text-blue-300 transition-colors duration-300">Dillon Baird</a>
             </div>
         </div>
     </div>
