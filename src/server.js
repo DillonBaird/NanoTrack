@@ -145,6 +145,7 @@ function configureRoutes(app, wsServer) {
     app.get('/scripts/campaign.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/campaign.js')));
     app.get('/logo.png', (req, res) => res.sendFile(path.join(__dirname, 'ui/logo.png')));
     app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'ui/favicon.ico')));
+    app.get('/nanotracker.png', (req, res) => res.sendFile(path.join(__dirname, 'ui/nanotracker.png')));
 
     app.post('/logout', (req, res) => {
         res.clearCookie('auth');
