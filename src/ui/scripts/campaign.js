@@ -589,7 +589,7 @@ function updateTrackingInfo() {
         const generatedUrl = `${baseUrl}/${eventType}.gif?campaignID=${campaignId}`;
         const generatedUrlStyled = `${baseUrl}/<strong>${eventType}</strong>.gif?campaignID=<strong>${campaignId}</strong>`;
         const generatedUrlStyledWithRedirect = `${baseUrl}/<strong>${eventType}</strong>?campaignID=<strong>${campaignId}</strong>&redirectURL=<strong>${redirectUrl}</strong>`
-        const generatedImgPath = `<img src="${generatedUrlStyled}" alt="NanoTrack" />`;
+        const generatedImgPath = `<img src="${generatedUrlStyled}" referrerpolicy="no-referrer-when-downgrade" alt="NanoTrack" />`;
         const generatedLinkPath = `<a href="${generatedUrlStyledWithRedirect}">Some Link Text</a>`;
 
         if (eventType === 'click') {
