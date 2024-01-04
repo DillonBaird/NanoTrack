@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NanoTrack - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script src="/scripts/navigation.js"></script>
+    <script src="/scripts/websocket.js"></script>
+    <script src="/scripts/dataProcessing.js"></script>
+    <script src="/scripts/charts.js"></script>
+    <script src="/scripts/uiHelpers.js"></script>
+    <style type="text/css">
+        #dateRangeSelector {
+            height: 2.5rem; /* Match the height with other inputs */
+            padding: 0.5rem 1rem; /* Padding for text */
+            -webkit-appearance: none; /* Remove default styling */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23999" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center; /* Position for arrow */
+            background-size: 1.5em;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-950 flex flex-col min-h-screen dark:text-gray-200">
+    <div class="bg-gray-800 dark:bg-gray-950 pt-4 py-4">
+        <div class="container mx-auto text-center text-white">
+            <div id="header"></div>
+        </div>
+    </div>
+    <div class="flex-grow container mx-auto py-8 px-5">
+        <h1 class="text-3xl font-bold mb-4">Real-Time Dashboard</em></h1>
+        <!-- Charts and Data Display Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Data Chart -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <div class="chart-container">
+                    <canvas id="dataChart" class="w-full"></canvas>
+                </div>
+            </div>
+            <!-- Campaign Chart -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <div class="chart-container">
+                    <canvas id="campaignChart" class="w-full"></canvas>
+                </div>
+            </div>
+            <!-- Path Chart -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <div class="chart-container">
+                    <canvas id="pathChart" class="w-full"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="flex flex-wrap gap-4 my-4 items-center">
+        
+            <!-- Date Range Selector -->
+            <select id="dateRangeSelector" class="inline-block w-1/6 bg-white dark:bg-gray-700 dark:border-gray-500 border border-gray-300 text-gray-700 rounded leading-tight dark:text-gray-200 appearance-none">
+                <option value="">Select a Range</option>
+                <option value="today">Today</option>
+                <option value="last24Hours">Last 24 Hours</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="thisWeek">This Week</option>
+                <option value="last7Days">Last 7 Days</option>
+                <option value="thisMonth">This Month</option>
+                <option value="last30Days">Last 30 Days</option>
+                <option value="last60Days">Last 60 Days</option>
+                <option value="last90Days">Last 90 Days</option>
+                <option value="thisYear">This Year</option>
+                <option value="allTime">All Time</option>
+                <option value="custom">Custom Range</option>
+                <!-- ...other options... -->
+            </select>
+        
+            <!-- Custom Date Range Inputs -->
+            <div class="flex gap-2 hidden" id="customDateRange">
+                <input type="date" id="startDate" class="form-input px-4 py-2 border dark:bg-gray-700 dark:border-gray-500">
+                <input type="date" id="endDate" class="form-input px-4 py-2 border dark:bg-gray-700 dark:border-gray-500">
+            </div>
+
+
+            <!-- Search Bar -->
+            <input type="text" id="searchInput" class="flex-grow dark:bg-gray-700 dark:border-gray-500 form-input px-4 py-2 border rounded" placeholder="Search for data...">
+        
+            <!-- Clear Filters Button -->
+            <button onclick="clearFilters()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Clear Filters</button>
+        </div>
+        
+
+        <!-- Data Table -->
+        <div class="overflow-auto max-h-[48dvh]">
+            <table id="trackingData" class="table-auto w-full">
+                <thead>
+                    <tr class="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Campaign</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Event</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">referrer</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">IP</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Browser</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Device</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">OS</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Country</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Region</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">City</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Timezone</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Language</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Decay</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Params</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">Accept Headers</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">DNT</th>
+                        <th class="py-3 px-6 text-left whitespace-nowrap">HTTP Version</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 dark:text-gray-200 text-sm font-light">
+                    <!-- Data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="pagination" class="my-4 hidden">
+            <button onclick="changePage(-1)"
+                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Previous</button>
+            <span id="currentPage" class="mx-4 font-semibold">1</span>
+            <button onclick="changePage(1)"
+                class="bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Next</button>
+        </div>
+
+    </div>
+
+    <div class="bg-gray-800 dark:bg-gray-950 py-4">
+        <div class="container mx-auto text-center text-white text-sm">
+            <div id="footer"></div>
+        </div>
+    </div>
+
+    <script src="/scripts/filters.js"></script>
+</body>
+
+</html>
