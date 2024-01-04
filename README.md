@@ -7,6 +7,34 @@
 ## 🌟 Introduction
 NanoTrack redefines web analytics with its minimalistic yet powerful approach to user activity tracking. Designed for performance-conscious developers and marketers, it ensures efficient data collection without the need for heavy JavaScript libraries, aligning with modern standards of ethical web practices.
 
+## 🎯 Use Cases
+- **Email Campaign Tracking**: Measure open rates and engagement.
+- **Website Visitor Analytics**: Gain insights without impacting load times.
+- **Marketing Campaign Monitoring**: Unique IDs for tailored tracking.
+
+## ✅ Core Features
+
+NanoTrack offers a fresh take on web analytics, focusing on simplicity and minimalism. Here's a snapshot of its evolving features:
+
+| Feature                                | Description                                                                                      |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Ultra-Lightweight Tracking Method**   | NanoTrack employs a 1-pixel GIF for analytics, ensuring an almost invisible impact on your site’s performance and user experience. |
+| **User-Friendly Design**                | The tool is crafted for straightforward setup and ease of use, making web analytics approachable for users of all skill levels. |
+| **Storage Flexibility**                | NanoTrack offers MongoDB for scalability or flat files for simplicity. MongoDB is included in the default docker-compose setup but can be disabled for external connections. Choose the storage option that suits your needs. |
+| **No JavaScript Dependency**            | Operating without heavy JavaScript, NanoTrack offers a nimble alternative that contributes to quicker page loads and smoother site interactions. |
+| **Emerging Real-Time Dashboard**        | The real-time dashboard, in its beta form, provides instant insights in a simple and uncluttered format, tailored for quick analysis. |
+| **Introductory Click Tracking Feature** | The new click tracking with redirection functionality is a step towards more dynamic analytics, enabling basic user journey tracking. |
+| **Multi-Campaign Capability**           | NanoTrack simplifies handling multiple campaigns with ease, requiring only unique campaign IDs, making it versatile for various tracking needs. |
+| **Streamlined URL Generator**           | The inclusion of a URL generator tool aids in effortlessly creating precise tracking tags, eliminating the typical complexities of setup. |
+| **Custom Parameter Tracking Ability**    | This feature allows the customization of tracking parameters, offering a level of detail and specificity for targeted analytics. |
+| **Dedicated Dashboards for Campaigns**   | Separate dashboards for individual campaigns provide more nuanced insights, enhancing campaign-specific analysis. |
+| **Ethical Approach to Data**            | From the outset, NanoTrack has been committed to ethical data practices, placing a high priority on user privacy and responsible data handling. |
+| **Tracking Transparency Page**          | In line with NanoTrack's commitment to ethical tracking, the unique Tracking Transparency Page is triggered when users directly access a tracking pixel URL. |
+
+
+As NanoTrack continues to evolve in its beta phase, it represents a commitment to simplicity and ethical practices in web analytics. This project, rich with potential, invites users to not only leverage its current capabilities but also to contribute to its ongoing development, shaping a tool that embodies both efficiency and ethical responsibility.
+
+
 ## 🌄 Background
 NanoTrack was born out of a simple yet profound idea: to shed light on the extensive data exchanged with every interaction on the internet. My initial inspiration was to create a project that would inform users and the internet at large about the staggering amount of data they unknowingly release with every call to a server. It was an attempt to raise awareness about data privacy expectations online, regardless of how diligently we try to block trackers.
 
@@ -35,6 +63,8 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
 ## 📖 Table of Contents
 - [📊 NanoTrack: 1x1 Nano-Size Spy-Pixel Analytics](#-nanotrack-1x1-nano-size-spy-pixel-analytics)
   - [🌟 Introduction](#-introduction)
+  - [🎯 Use Cases](#-use-cases)
+  - [✅ Core Features](#-core-features)
   - [🌄 Background](#-background)
   - [🚧 Early-Release Beta Status](#-early-release-beta-status)
     - [Current Phase](#current-phase)
@@ -44,23 +74,12 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
   - [📖 Table of Contents](#-table-of-contents)
   - [🚀 Getting Started](#-getting-started)
     - [Self-Hosting](#self-hosting)
-    - [Cloud Providers](#cloud-providers)
-      - [DigitalOcean](#digitalocean)
-      - [Google Cloud Run](#google-cloud-run)
-      - [Amazon ECS](#amazon-ecs)
-      - [Kamatera](#kamatera)
   - [🌟 Usage Examples](#-usage-examples)
     - [Web Tracking](#web-tracking)
     - [Email Tracking](#email-tracking)
     - [Event Tracking](#event-tracking)
+    - [Click Tracking](#click-tracking)
     - [Advanced Parameter Tracking](#advanced-parameter-tracking)
-  - [🌐 NPM Library for Easy Integration](#-npm-library-for-easy-integration)
-    - [🛠️ Quick Integration](#️-quick-integration)
-      - [For React:](#for-react)
-      - [For Vue:](#for-vue)
-    - [More Frameworks:](#more-frameworks)
-  - [🌟 Core Features](#-core-features)
-  - [🎯 Use Cases](#-use-cases)
   - [📦 Installation](#-installation)
     - [Docker Setup (Recommended)](#docker-setup-recommended)
     - [Alternative Installation](#alternative-installation)
@@ -70,9 +89,6 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
     - [🛠️ Setting Up the `.env` File](#️-setting-up-the-env-file)
   - [📄 Responsible and Ethical Use](#-responsible-and-ethical-use)
   - [🔒 Enhancing Security with HTTPS](#-enhancing-security-with-https)
-    - [Why Use HTTPS?](#why-use-https)
-    - [Setting Up HTTPS with Cloudflare](#setting-up-https-with-cloudflare)
-      - [Steps to Implement:](#steps-to-implement)
   - [⚠️ Limitations of Pixel Tracking](#️-limitations-of-pixel-tracking)
     - [Caching Challenges](#caching-challenges)
     - [Comparison with Standard Analytics](#comparison-with-standard-analytics)
@@ -101,35 +117,7 @@ If you prefer self-hosting, follow these steps:
 docker pull nanotrack/nanotrack
 docker run [options] nanotrack/nanotrack
 ```
-3. Embed the tracking pixel: `http://[your_server_ip]/track/action.gif?campaignID=your-campaign-id`
-
-### Cloud Providers
-Choose your preferred cloud provider to quickly deploy NanoTrack:
-
-#### DigitalOcean
-1. Create a new Droplet using the Docker image for NanoTrack.
-2. SSH into your Droplet and run the following commands:
-```bash
-docker pull nanotrack/nanotrack
-docker run [options] nanotrack/nanotrack
-```
-3. Embed the tracking pixel: `http://[Droplet_IP]/track/action.gif?campaignID=your-campaign-id`
-
-#### Google Cloud Run
-1. Create a new Cloud Run service using the NanoTrack Docker image from Docker Hub.
-2. Deploy the service and expose it to the internet.
-3. Access your NanoTrack instance using the provided URL.
-
-#### Amazon ECS
-1. Create a new Amazon ECS cluster and task definition using the NanoTrack Docker image.
-2. Launch the task on your cluster.
-3. Configure the service to expose it to the internet.
-4. Access your NanoTrack instance using the provided URL.
-
-#### Kamatera
-1. Create a new instance using the NanoTrack Docker image.
-2. Configure networking to expose the instance to the internet.
-3. Access your NanoTrack instance using the provided IP.
+1. Embed the tracking pixel: `http://[your_server_ip]/track/action.gif?campaignID=your-campaign-id`
 
 ## 🌟 Usage Examples
 NanoTrack allows for the tracking of various user interactions by embedding customizable tracking URLs. You can track standard metrics like page views or email opens, and also include unlimited additional parameters in the URL query to capture specific user actions or preferences.
@@ -151,54 +139,19 @@ Monitor specific user actions or events on your application. For instance, to tr
 
 This example would track whenever a user accesses the registration page, helping you understand user interest in signing up for your service.
 
+### Click Tracking
+Track user clicks that lead them to external links. Embed a URL like the following to log click events and then redirect the user to the intended destination:
+
+> < a href="http://**[your_server_ip]**/track/**click**?campaignID=**dillonbaird.io**&redirectURL=**https://dillonbaird.io**">DillonBaird.io</ a>
+
+This feature is particularly useful for tracking outbound link clicks, providing insights into how users interact with external links on your site.
+
 ### Advanced Parameter Tracking
 NanoTrack also supports tracking of additional custom parameters. You can append any number of custom parameters to your tracking URL to gather more detailed insights. For instance, to track how far users scroll on a blog post and whether they use dark mode, you might use:
 
 > http://**[your_server_ip]**/track/**pageview**.gif?campaignID=**dillonbaird.io**&**scroll-depth=70%**&**dark-mode=true**
 
 This method allows for a highly detailed understanding of user behavior and preferences, making your analytics more robust and actionable.
-
-## 🌐 NPM Library for Easy Integration
-If for some unknown reason embeding an <img src="..." /> tag is too vanilla/native for you, I've developed an NPM library for seamless embedding of NanoTrack in frameworks like React, Vue, and more. With these packages, embedding a tracking pixel is as easy as adding a component. (Feels silly doesn't it? But hey, who am I to judge?)
-
-### 🛠️ Quick Integration
-#### For React:
-```javascript
-import { NanoTracker } from 'nanotrack-react';
-
-<NanoTracker campaignID="your-campaign-id" />
-```
-
-#### For Vue:
-```javascript
-<template>
-  <nano-tracker campaign-id="your-campaign-id"></nano-tracker>
-</template>
-
-<script>
-import NanoTracker from 'nanotrack-vue';
-
-export default {
-  components: {
-    NanoTracker
-  }
-}
-</script>
-```
-
-### More Frameworks:
-Continuously expanding to support a wide range of frameworks.
-
-## 🌟 Core Features
-- **Effortless Data Collection**: Tracks essential metrics with a simple pixel.
-- **Real-Time Dashboard**: View user interactions instantly.
-- **Storage Flexibility**: MongoDB for scalability, flat files for simplicity.
-- **Lightweight and Non-Intrusive**: No heavy JavaScript.
-
-## 🎯 Use Cases
-- **Email Campaign Tracking**: Measure open rates and engagement.
-- **Website Visitor Analytics**: Gain insights without impacting load times.
-- **Marketing Campaign Monitoring**: Unique IDs for tailored tracking.
 
 ## 📦 Installation
 ### Docker Setup (Recommended)
@@ -278,21 +231,12 @@ By using NanoTrack, you commit to:
 
 In today's digital landscape, securing your tracking data is paramount. We highly recommend using HTTPS to encrypt the data transmitted between your users and NanoTrack. This not only protects user privacy but also strengthens the integrity of the data collected.
 
-### Why Use HTTPS?
+**Why Use HTTPS?**
 - **Data Security:** Prevents unauthorized interception of tracking data.
 - **User Trust:** Increases trust in your service, as users are becoming more security-conscious.
 - **SEO Benefits:** Search engines, like Google, favor HTTPS-enabled websites, potentially improving your site's ranking.
 
-### Setting Up HTTPS with Cloudflare
-One of the simplest ways to implement HTTPS is by using Cloudflare. Cloudflare provides a free and easy-to-setup SSL/TLS certificate, ensuring that your tracking data is securely transmitted over the internet.
-
-#### Steps to Implement:
-1. **Register with Cloudflare:** Sign up for a free account on Cloudflare.
-2. **Configure DNS Settings:** Point your domain's DNS records to Cloudflare.
-3. **Enable SSL/TLS:** In your Cloudflare dashboard, navigate to the SSL/TLS section and enable the 'Full' or 'Strict' SSL/TLS encryption mode.
-4. **Update NanoTrack URLs:** Ensure that all NanoTrack URLs in your project are updated to `https`.
-
-By following these steps, you can significantly enhance the security of your NanoTrack implementation with minimal effort.
+> *One of the simplest ways to implement HTTPS is by using Cloudflare. Cloudflare provides a free and easy-to-setup SSL/TLS certificate, ensuring that your tracking data is securely transmitted over the internet.*
 
 ## ⚠️ Limitations of Pixel Tracking
 

@@ -1,36 +1,33 @@
-// Load environment variables from .env file and import required modules
+// Load environment variables and required modules
 require('dotenv').config();
-const cookieParser = require('cookie-parser');
 const express = require('express');
-const minifyHTML = require('express-minify-html');
-const nocache = require('nocache');
-const path = require('path');
-const useragent = require('express-useragent');
-const WebSocket = require('ws');
-const { dbConnect } = require('./db');
 const http = require('http');
+const path = require('path');
+const WebSocket = require('ws');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const useragent = require('express-useragent');
+const nocache = require('nocache');
+const minifyHTML = require('express-minify-html');
+const { dbConnect } = require('./db');
 
-// Initialize Express application and create HTTP server
 const app = express();
 const httpServer = http.createServer(app);
 
 // Database Connection
-dbConnect();
+dbConnect().catch(err => console.error('Database connection error:', err));
 
 // Middleware Configuration
 configureMiddleware(app);
 
-// WebSocket Server Initialization and Configuration
-const webSocketServer = initializeWebSocket(httpServer);
+// WebSocket Server Initialization
+const webSocketServer = new WebSocket.Server({ server: httpServer });
+configureWebSocketServer(webSocketServer);
 
 // Route Configuration
 configureRoutes(app, webSocketServer);
 
-// Error Handling Middleware
-app.use(errorHandler);
-
-// Minification
+// HTML Minification
 app.use(minifyHTML({
     override: true,
     exception_url: false,
@@ -45,34 +42,11 @@ app.use(minifyHTML({
 }));
 
 // Server Activation
-const port = process.env.PORT || 80;
-httpServer.listen(port, () => console.log(`Server is running on http://localhost:${port}`));
+const PORT = process.env.PORT || 80;
+httpServer.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
 
-// Graceful Shutdown Function
-function gracefulShutdown() {
-    console.log("Received SIGTERM, gracefully shutting down");
-
-    httpServer.close(() => {
-        console.log("HTTP server closed");
-
-        // Close WebSocket server
-        webSocketServer.close(() => {
-            console.log("WebSocket server closed");
-
-            // Close Mongoose connection
-            mongoose.connection.close(false, () => {
-                console.log("MongoDB connection closed.");
-                process.exit(0);
-            });
-        });
-    });
-}
-
-// Listen for SIGTERM signal
+// Graceful Shutdown
 process.on('SIGTERM', gracefulShutdown);
-
-// Export Application and WebSocket Server
-module.exports = { app, webSocketServer };
 
 function configureMiddleware(app) {
     app.use(express.json());
@@ -83,81 +57,117 @@ function configureMiddleware(app) {
     app.set('etag', false);
 }
 
-function initializeWebSocket(httpServer) {
-    const wsServer = new WebSocket.Server({ server: httpServer });
+function configureWebSocketServer(wsServer) {
     wsServer.on('connection', socket => {
         socket.on('message', message => console.log('WebSocket received:', message));
         socket.send('WebSocket connection established');
         socket.on('close', () => console.log('WebSocket connection closed'));
         socket.on('error', error => console.error('WebSocket error:', error));
     });
-    return wsServer;
 }
 
 function configureRoutes(app, wsServer) {
-    // Authentication middleware
-    const isAuthenticated = (req, res, next) => {
-        if (req.cookies.auth) return next();
-        res.redirect('/login');
+    // Authentication Middleware
+    app.use('/dashboard', isAuthenticated);
+    app.use('/campaigns', isAuthenticated);
+    app.use('/campaigns/:campaignId', isAuthenticated);
+
+    // HTML Content Routes
+    const htmlPaths = {
+        '/': '/dashboard',
+        '/login': '/ui/login.html',
+        '/dashboard': '/ui/dashboard.html',
+        '/campaigns': '/ui/campaigns.html',
+        '/campaigns/:campaignId': '/ui/campaign.html',
     };
 
-    // UI and API Routes
-    app.get('/', (req, res) => res.redirect(301, '/dashboard'));
-    app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'ui/login.html')));
-    app.post('/login', (req, res) => {
-        const { username, password } = req.body;
-        if (username === process.env.USERNAME && password === process.env.PASSWORD) {
-            res.cookie('auth', 'true', { httpOnly: true });
-            res.redirect('/dashboard');
-        } else {
-            res.send('Invalid credentials');
-        }
-    });
+    // JavaScript Content Routes
+    const jsPaths = {
+        '/scripts/charts.js': '/ui/scripts/charts.js',
+        '/scripts/navigation.js': '/ui/scripts/navigation.js',
+        '/scripts/dataProcessing.js': '/ui/scripts/dataProcessing.js',
+        '/scripts/filters.js': '/ui/scripts/filters.js',
+        '/scripts/uiHelpers.js': '/ui/scripts/uiHelpers.js',
+        '/scripts/websocket.js': '/ui/scripts/websocket.js',
+        '/scripts/campaigns.js': '/ui/scripts/campaigns.js',
+        '/scripts/campaign.js': '/ui/scripts/campaign.js',
+    };
 
-    app.get('/dashboard', isAuthenticated, (req, res) => {
-        if (req.url.endsWith('/')) {
-            res.redirect(301, req.url.slice(0, -1));
-        }
-        res.sendFile(path.join(__dirname, 'ui/dashboard.html'));
-    });
+    // Image Content Routes
+    const imagePaths = {
+        '/logo.png': '/ui/logo.png',
+        '/favicon.ico': '/ui/favicon.ico',
+        '/nanotracker.png': '/ui/nanotracker.png',
+    };
 
-    app.get('/campaigns', isAuthenticated, (req, res) => {
-        if (req.url.endsWith('/')) {
-            res.redirect(301, req.url.slice(0, -1));
-        }
-        res.sendFile(path.join(__dirname, 'ui/campaigns.html'));
-    });
+    // Utility function to register static paths in Express app
+    function registerStaticPaths(app, paths) {
+        Object.keys(paths).forEach(route => {
+            app.get(route, (req, res) => sendFileOrRedirect(req, res, paths[route]));
+        });
+    }
 
-    app.get('/campaigns/:campaignId', isAuthenticated, (req, res) => {
-        if (req.url.endsWith('/')) {
-            res.redirect(301, req.url.slice(0, -1));
-        }
-        res.sendFile(path.join(__dirname, 'ui/campaign.html'));
-    });
+    // Registering all static paths
+    registerStaticPaths(app, htmlPaths);
+    registerStaticPaths(app, jsPaths);
+    registerStaticPaths(app, imagePaths);
 
-    app.get('/scripts/charts.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/charts.js')));
-    app.get('/scripts/navigation.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/navigation.js')));
-    app.get('/scripts/dataProcessing.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/dataProcessing.js')));
-    app.get('/scripts/filters.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/filters.js')));
-    app.get('/scripts/uiHelpers.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/uiHelpers.js')));
-    app.get('/scripts/websocket.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/websocket.js')));
-    app.get('/scripts/campaigns.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/campaigns.js')));
-    app.get('/scripts/campaign.js', (req, res) => res.sendFile(path.join(__dirname, 'ui/scripts/campaign.js')));
-    app.get('/logo.png', (req, res) => res.sendFile(path.join(__dirname, 'ui/logo.png')));
-    app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, 'ui/favicon.ico')));
-    app.get('/nanotracker.png', (req, res) => res.sendFile(path.join(__dirname, 'ui/nanotracker.png')));
 
+    // Authentication Routes
+    app.post('/login', handleLogin);
     app.post('/logout', (req, res) => {
         res.clearCookie('auth');
         res.redirect('/login');
     });
 
-    // Tracking routes
+    // Tracking Routes
     const trackingRouter = require('./routes/tracking')(wsServer);
     app.use('/track', trackingRouter);
 }
+
+// Middleware to check if user is authenticated
+function isAuthenticated(req, res, next) {
+    if (req.cookies.auth) return next();
+    res.redirect('/login');
+}
+
+// Send file or redirect if URL ends with '/'
+function sendFileOrRedirect(req, res, filePath) {
+    if (req.url.endsWith('/')) {
+        res.redirect(301, req.url.slice(0, -1));
+    } else {
+        res.sendFile(path.join(__dirname, filePath));
+    }
+}
+
+// Handle login logic
+function handleLogin(req, res) {
+    const { username, password } = req.body;
+    if (username === process.env.USERNAME && password === process.env.PASSWORD) {
+        res.cookie('auth', 'true', { httpOnly: true });
+        res.redirect('/dashboard');
+    } else {
+        res.send('Invalid credentials');
+    }
+}
+
+
+function gracefulShutdown() {
+    console.log("Received SIGTERM, gracefully shutting down");
+    httpServer.close(async () => {
+        console.log("HTTP server closed");
+        webSocketServer.close(() => console.log("WebSocket server closed"));
+        await mongoose.connection.close();
+        console.log("MongoDB connection closed");
+        process.exit(0);
+    });
+}
+
+app.use(errorHandler);
 
 function errorHandler(err, req, res, next) {
     console.error('Server error:', err.stack);
     res.status(500).send('Internal Server Error');
 }
+
+module.exports = { app, webSocketServer };

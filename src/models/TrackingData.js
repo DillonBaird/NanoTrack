@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
-const { getDB } = require('../db'); // Import getDB from db.js
+const { getDB } = require('../db'); // Importing getDB from db.js
 
-// Define the Mongoose schema for tracking data
+/**
+ * Schema definition for tracking data using Mongoose.
+ */
 const trackingDataSchema = new mongoose.Schema({
     host: String,
     referrer: String,
@@ -11,19 +13,19 @@ const trackingDataSchema = new mongoose.Schema({
     useragent: {
         browser: String,
         version: String,
-        device: String, // Device type (mobile/desktop)
+        device: String, // Type of device (mobile/desktop)
         os: String, // Operating System
     },
     language: [String],
     geo: {
         ip: String,
-        city: String, // City from geoip lookup
-        country: String // Country from geoip lookup
+        city: String, // City determined via geoip lookup
+        country: String // Country determined via geoip lookup
     },
     domain: String,
     timestamp: { type: Date, default: Date.now },
-    acceptHeaders: String, // Accept Headers
-    dnt: String, // Do Not Track Setting
+    acceptHeaders: String, // HTTP Accept Headers
+    dnt: String, // Do Not Track preference
     httpVersion: String, // HTTP Protocol Version
     campaignID: {
         type: String,
@@ -31,64 +33,60 @@ const trackingDataSchema = new mongoose.Schema({
     },
 });
 
-// TrackingDataAdapter class to handle database operations
+/**
+ * Class to manage database operations for tracking data.
+ */
 class TrackingDataAdapter {
     constructor(model) {
         this.model = model;
     }
 
     /**
-     * Saves a document to the database.
-     * @param {Object} document The document to save.
-     * @returns {Promise} The saved document.
+     * Saves a new tracking data document in the database.
+     * @param {Object} document - Document to be saved.
+     * @returns {Promise} - Promise resolving with the saved document.
      */
     async save(document) {
         const db = getDB();
         if (db.model) {
-            // Use Mongoose model to save for MongoDB
             return new this.model(document).save();
         } else {
-            // Use flat file save method
-            return db.save(document);
+            return db.save(document); // Fallback for flat file database
         }
     }
 
     /**
-     * Finds documents in the database matching a query.
-     * @param {Object} query The query to match.
-     * @returns {Promise} Array of found documents.
+     * Retrieves documents from the database matching a given query.
+     * @param {Object} query - Query object to filter documents.
+     * @returns {Promise<Array>} - Promise resolving with an array of matched documents.
      */
     async find(query) {
         const db = getDB();
         if (db.model) {
-            // Use Mongoose model to find for MongoDB
             return this.model.find(query);
         } else {
-            // Use flat file find method
-            return db.find(query);
+            return db.find(query); // Fallback for flat file database
         }
     }
 
     /**
-     * Deletes documents from the database matching a specific campaignID.
-     * @param {String} campaignID The campaignID to match for deletion.
-     * @returns {Promise} Result of the deletion operation.
+     * Deletes documents from the database matching a specified campaignID.
+     * @param {String} campaignID - Campaign ID for matching documents to delete.
+     * @returns {Promise} - Promise resolving with the result of the deletion operation.
      */
     async deleteMany(campaignID) {
         const db = getDB();
         if (db.model) {
-            // Use Mongoose model to delete for MongoDB
-            return this.model.deleteMany({ campaignID: campaignID });
+            return this.model.deleteMany({ campaignID });
         } else {
-            // If using a flat file, implement a corresponding delete logic
-            return db.deleteMany({ campaignID });
-            // throw new Error('deleteByCampaignID method not implemented for flat file DB');
+            return db.deleteMany({ campaignID }); // Fallback for flat file database
+            // Consider throwing an error if method is not implemented for flat file DB
         }
     }
 
-    // Additional methods (e.g., findById, deleteOne) can be implemented as needed
+    // Additional methods (e.g., findById, deleteOne) can be implemented as required.
 }
 
-// Create and export an instance of the TrackingDataAdapter
+// Export an instance of TrackingDataAdapter using the TrackingData model
 const TrackingDataModel = mongoose.model('TrackingData', trackingDataSchema);
 module.exports = new TrackingDataAdapter(TrackingDataModel);

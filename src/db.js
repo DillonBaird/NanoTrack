@@ -3,7 +3,7 @@ const fsp = require('fs').promises;
 const path = require('path');
 
 /**
- * Class representing a flat file database.
+ * Class representing a flat file database for storing JSON data.
  */
 class FlatFileDB {
     constructor(filePath) {
@@ -11,132 +11,104 @@ class FlatFileDB {
     }
 
     /**
-     * Connects to the flat file database by ensuring the file exists.
+     * Initializes the flat file database, creating the file if it does not exist.
      */
-    async connect() {
+    async initialize() {
         try {
-            // Check if the file exists
             await fsp.access(this.filePath, fsp.constants.F_OK);
         } catch (err) {
             if (err.code === 'ENOENT') {
-                // Create the file if it doesn't exist
                 await fsp.writeFile(this.filePath, JSON.stringify([]));
             } else {
-                // Handle other errors
-                console.error('Error initializing flat file DB:', err);
-                throw err;
+                throw new Error(`Failed to initialize flat file DB: ${err.message}`);
             }
         }
     }
 
     /**
      * Saves data to the flat file database.
-     * @param {*} data Data to be saved.
-     * @returns {*} The saved data.
+     * @param {Object} data - The data to be saved.
+     * @returns {Promise<Object>} - The saved data.
      */
     async save(data) {
-        console.log('Saving data to flat file:', data);
         try {
-            let fileData = await fsp.readFile(this.filePath);
-            let json = JSON.parse(fileData);
+            const fileData = await fsp.readFile(this.filePath);
+            const json = JSON.parse(fileData);
             json.push(data);
             await fsp.writeFile(this.filePath, JSON.stringify(json, null, 2));
-            console.log('Data saved successfully.');
             return data;
         } catch (err) {
-            console.error('Error saving data to flat file DB:', err);
-            throw err;
+            throw new Error(`Error saving data: ${err.message}`);
         }
     }
 
     /**
-     * Finds data in the flat file database matching a query.
-     * @param {*} query Query to filter the data.
-     * @returns {Array} Array of matched data.
+     * Retrieves data from the database matching a given query.
+     * @param {Object} query - Query to filter the data.
+     * @returns {Promise<Array>} - Matched data array.
      */
-    async find(query) {
-        console.log('Fetching data from flat file with query:', query);
+    async find(query = {}) {
         try {
-            let fileData = await fsp.readFile(this.filePath);
-            let json = JSON.parse(fileData);
-            console.log('Data fetched successfully.');
-
-            // Return all data if no query is provided
-            if (!query || Object.keys(query).length === 0) {
-                return json;
-            }
-
-            // Filter data based on the query
-            return json.filter(item => {
-                for (const key in query) {
-                    if (query.hasOwnProperty(key)) {
-                        if (!item.hasOwnProperty(key) || item[key] !== query[key]) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            });
+            const fileData = await fsp.readFile(this.filePath);
+            const json = JSON.parse(fileData);
+            return json.filter(item => Object.keys(query).every(key => item[key] === query[key]));
         } catch (err) {
-            console.error('Error querying data from flat file DB:', err);
-            throw err;
+            throw new Error(`Error querying data: ${err.message}`);
         }
     }
 
     /**
-     * Deletes documents from the database matching a specific query.
-     * @param {*} query Query to match for deletion.
-     * @returns {Promise} Result of the deletion operation.
+     * Deletes records from the database that match the given query.
+     * @param {Object} query - Query to match for deletion.
+     * @returns {Promise<Object>} - Result of the deletion operation.
      */
     async deleteMany(query) {
         try {
-            let fileData = await fsp.readFile(this.filePath);
-            let json = JSON.parse(fileData);
-
-            // Filter out the records that do not match the query
-            const updatedData = json.filter(item => {
-                for (const key in query) {
-                    if (query.hasOwnProperty(key) && item[key] === query[key]) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-
+            const fileData = await fsp.readFile(this.filePath);
+            const json = JSON.parse(fileData);
+            const updatedData = json.filter(item => !Object.keys(query).every(key => item[key] === query[key]));
             await fsp.writeFile(this.filePath, JSON.stringify(updatedData, null, 2));
             return { deletedCount: json.length - updatedData.length };
         } catch (err) {
-            console.error('Error deleting data from flat file DB:', err);
-            throw err;
+            throw new Error(`Error deleting data: ${err.message}`);
+        }
+    }
+}
+
+/**
+ * Initializes and manages the connection to the specified database type.
+ */
+class DBConnectionManager {
+    constructor() {
+        this.dbType = process.env.DB_TYPE || 'mongodb';
+        this.flatFileDB = new FlatFileDB(path.join(__dirname, '../NanoTrack-DB.json'));
+    }
+
+    /**
+     * Establishes connection to the chosen database.
+     */
+    async connect() {
+        if (this.dbType === 'mongodb') {
+            await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+            console.log('MongoDB connected...');
+        } else if (this.dbType === 'flatfile') {
+            await this.flatFileDB.initialize();
+            console.log('Flat file DB initialized...');
         }
     }
 
+    /**
+     * Provides access to the database.
+     * @returns {mongoose|Mongoose} - The database instance.
+     */
+    getDB() {
+        return this.dbType === 'mongodb' ? mongoose : this.flatFileDB;
+    }
 }
 
-// Determine database type and setup connection
-const dbType = process.env.DB_TYPE || 'mongodb';
-const flatFilePath = path.join(__dirname, '../NanoTrack-DB.json');
-const flatFileDB = new FlatFileDB(flatFilePath);
+const dbConnectionManager = new DBConnectionManager();
 
-/**
- * Connects to the chosen database type.
- */
-const dbConnect = () => {
-    if (dbType === 'mongodb') {
-        // MongoDB connection
-        mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-            .then(() => console.log('MongoDB connected...'))
-            .catch(err => console.error('MongoDB connection error:', err));
-    } else if (dbType === 'flatfile') {
-        // Flat file database connection
-        flatFileDB.connect()
-            .then(() => console.log('Flat file DB initialized...'))
-            .catch(err => console.error('Flat file DB initialization error:', err));
-    }
-};
-
-// Exporting database connection and access functions
 module.exports = {
-    dbConnect,
-    getDB: () => dbType === 'mongodb' ? mongoose : flatFileDB
+    dbConnect: dbConnectionManager.connect.bind(dbConnectionManager),
+    getDB: dbConnectionManager.getDB.bind(dbConnectionManager)
 };
