@@ -292,7 +292,13 @@ NanoTrack is under the [MIT License](LICENSE.md).
 For support or inquiries, reach us at [Your Email/Contact Information].
 
 ## 📸 Screenshots
-![NanoTrack Dashboard](/path/to/dashboard_screenshot.png)
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/27366ee8-332a-4f97-aeff-ee72a7acf5a3" width="49%">&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/bf1335c4-8c1e-41f7-8dc5-f22bdf44daf0" width="49%"><br/><br/>
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/fba25aac-a06c-4803-ac49-78134338d16b" width="49%">&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/0cde6aca-835a-4d28-b153-21a81ac94fae" width="49%"><br/><br/>
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/18566717-0d59-4fc3-bb4c-4267edb3e899" width="49%">&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/2a6b9a99-2378-4da5-9aa3-f6d7f95e5607" width="49%">
+
 
 ## 🛣 Roadmap
 - [Feature 1]
