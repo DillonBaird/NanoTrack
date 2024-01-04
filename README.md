@@ -108,16 +108,48 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
   - [🛠 Troubleshooting](#-troubleshooting)
 
 ## 🚀 Getting Started
+
 ### Self-Hosting
 If you prefer self-hosting, follow these steps:
 
 1. Clone this repository to your server.
-2. Deploy NanoTrack using Docker:
-```bash
-docker pull nanotrack/nanotrack
-docker run [options] nanotrack/nanotrack
-```
-1. Embed the tracking pixel: `http://[your_server_ip]/track/action.gif?campaignID=your-campaign-id`
+2. Deploy NanoTrack using Docker Compose. Create a `docker-compose.yml` file with the following content:
+
+   ```yaml
+   version: '3'
+
+   services:
+     nanotrack:
+       image: nanotrack/nanotrack:latest
+       ports:
+         - "3000:80" # Use whatever port you would like
+       environment:
+         - NODE_ENV=production
+         - MONGO_URI=mongodb://nanotrack:nanotrack@mongodb:27017/nanotrack  # Use the hostname "mongodb" if using the mongodb in this compose
+         - PORT=80
+         - DB_TYPE=mongodb
+         # - DB_TYPE=flatfile #only recommended for testing
+         - USERNAME=nanotrack
+         - PASSWORD=admin
+       restart: unless-stopped
+
+     mongodb:
+       image: mongo
+       environment:
+         MONGO_INITDB_ROOT_USERNAME: root
+         MONGO_INITDB_ROOT_PASSWORD: rootpassword
+         MONGO_INITDB_DATABASE: nanotrack
+       volumes:
+         - mongodb_data:/data/db
+         - ./mongo-init-scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+
+   volumes:
+     mongodb_data:  # Define a volume to persist MongoDB data
+   ```
+
+3. Run `docker-compose up` to start the service.
+4. Embed the tracking pixel: `http://[your_server_ip]/track/action.gif?campaignID=your-campaign-id`
+
 
 ## 🌟 Usage Examples
 NanoTrack allows for the tracking of various user interactions by embedding customizable tracking URLs. You can track standard metrics like page views or email opens, and also include unlimited additional parameters in the URL query to capture specific user actions or preferences.
@@ -183,11 +215,11 @@ Here are some of the key configuration options available:
      ```
 
 2. **Dashboard Authentication**
-   - `DASHBOARD_USER`: Set a username for dashboard access.
-   - `DASHBOARD_PASSWORD`: Set a password for dashboard access.
+   - `USERNAME`: Set a username for dashboard access.
+   - `PASSWORD`: Set a password for dashboard access.
      ```env
-     DASHBOARD_USER=admin
-     DASHBOARD_PASSWORD=securepassword
+     USERNAME=admin
+     PASSWORD=securepassword
      ```
 
 3. **Custom Tracking Image**
@@ -211,8 +243,8 @@ Here are some of the key configuration options available:
 Create a `.env` file in your project root and set your desired configuration options:
 ```env
 DB_TYPE=mongodb
-DASHBOARD_USER=admin
-DASHBOARD_PASSWORD=securepassword
+USERNAME=admin
+PASSWORD=securepassword
 TRACKING_IMAGE_URL=http://example.com/your-image.png
 DISABLE_IP_TRACKING=true
 DISABLE_USER_AGENT_TRACKING=false
@@ -292,17 +324,30 @@ NanoTrack is under the [MIT License](LICENSE.md).
 For support or inquiries, reach us at [Your Email/Contact Information].
 
 ## 📸 Screenshots
-<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/27366ee8-332a-4f97-aeff-ee72a7acf5a3" width="48%">&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/27366ee8-332a-4f97-aeff-ee72a7acf5a3" width="48%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/bf1335c4-8c1e-41f7-8dc5-f22bdf44daf0" width="48%"><br/><br/>
-<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/fba25aac-a06c-4803-ac49-78134338d16b" width="48%">&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/fba25aac-a06c-4803-ac49-78134338d16b" width="48%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/0cde6aca-835a-4d28-b153-21a81ac94fae" width="48%"><br/><br/>
-<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/18566717-0d59-4fc3-bb4c-4267edb3e899" width="48%">&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/18566717-0d59-4fc3-bb4c-4267edb3e899" width="48%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/2a6b9a99-2378-4da5-9aa3-f6d7f95e5607" width="48%">
 
 
 ## 🛣 Roadmap
-- [Feature 1]
-- [Improvement 2]
+- Additional Users / Roles
+- Campaign Blacklist
+- IP Blacklist
+- Dashboard Revamp
+- Campaign Dashboard Expansion
+- Reports
+- Data Export
+- Notifications
+- Digest Email
+- User Segmentation
+- Event Funnel Analysis
+- Custom Dashboards
+- Machine Learning Insights
+- A/B Testing
+- Integration with 3rd Party Tools
 - More on our [Roadmap](ROADMAP.md).
 
 ## 📜 Changelog
