@@ -27,7 +27,7 @@ WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app .
 
 # Expose the necessary port
-EXPOSE 3000
+EXPOSE 3001
 
 # Define the command to run the app
 CMD [ "node", "dist/nanoTrack.js" ]
