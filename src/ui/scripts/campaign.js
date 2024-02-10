@@ -263,7 +263,7 @@ function createCampaignDataTable(data) {
     headerTable.className = bodyTable.className = 'data-table';
 
     // Add headers to the header table
-    const headers = ['Event', 'referrer', 'IP', 'Browser', 'Device', 'OS', 'Country', 'Region', 'City', 'Timezone', 'Language', 'Timestamp']
+    const headers = ['Event', 'referrer', 'IP', 'Browser', 'Device', 'OS', 'Country', 'Region', 'City', 'Timezone', 'Language', 'Timestamp', 'Data']
     const headerRow = document.createElement('tr');
     headerRow.className = 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 uppercase text-sm leading-normal'
     headers.forEach(headerText => {
@@ -291,6 +291,7 @@ function createCampaignDataTable(data) {
             <td class="px-4 py-2 whitespace-nowrap">${item.geo.timezone || ''}</td>
             <td class="px-4 py-2 whitespace-nowrap">${item.language.join(', ') || ''}</td>
             <td class="px-4 py-2 whitespace-nowrap">${new Date(item.decay).toLocaleString() || ''}</td>
+            <td class="px-4 py-2 whitespace-nowrap">${typeof item.params === 'string' ? Object.entries(JSON.parse(item.params)).map(([key, value]) => `${key}: ${value}`).join(', ') : item.params ? Object.entries(item.params).map(([key, value]) => `${key}: ${value}`).join(', ') : ''}</td>
         `;
         bodyTable.appendChild(row);
     });
@@ -468,61 +469,37 @@ function displayCampaignData(data) {
 }
 
 function generateTracking(campaignId) {
-    // Create and show a modal with dropdowns for event type and optional campaign ID input
+    // Generate tracking modal with the campaignId from the current page
     const modal = document.createElement('div');
-    modal.className = 'tracking-modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full'; // Tailwind classes for modal
+    modal.className = 'tracking-modal fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full';
 
     let modalContentHTML = `
         <div class="modal-content bg-white p-6 mx-auto rounded-lg shadow-lg relative min-w-max top-20">
             <h2 class="text-xl font-semibold mb-4">Generate Tracking URL and Embed Code</h2>
-            <div class="mb-4">
-                <label for="eventType" class="block text-gray-700 text-sm font-bold mb-2">Event Type:</label>
-                <select id="eventType" name="eventType" class="inline-block w-1/6 bg-white border border-gray-300 text-gray-700 rounded leading-tight outline-none focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
-                    <option value="pageview">PageView</option>
-                    <option value="email-open">Email-Open</option>
-                    <option value="click">Click</option>
-                    <option value="other">Other</option>
-                    <!-- Add other event types as needed -->
-                </select>
-                <input type="text" id="customEventType" name="customEventType" class="hidden mt-3 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter custom event type"/>
-                <div id="redirectUrlInput" class="mb-4 hidden">
-                    <label for="redirectUrl" class="block text-gray-700 text-sm font-bold mb-2">Redirect URL:</label>
-                    <input type="text" id="redirectUrl" name="redirectUrl" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter redirect URL (ex. https://google.com)"/>
-                </div>
-            </div>
-    `;
 
-    // Add campaign ID input field if campaignId is not provided
-    if (!campaignId) {
-        modalContentHTML += `
+            <!-- Tracking Method -->
             <div class="mb-4">
-                <label for="campaignIdInput" class="block text-gray-700 text-sm font-bold mb-2">Campaign ID:</label>
-                <input type="text" value="my new campaign" id="campaignIdInput" name="campaignIdInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter campaign name"/>
-            </div>
-        `;
-    } else {
-        modalContentHTML += `
-            <div class="hidden">
-                <label for="campaignId">Campaign ID:</label>
-                <select id="campaignId" name="campaignId">
-                    <option value="${campaignId}">${campaignId}</option>
-                    <!-- Populate with other campaign IDs if needed -->
+                <label for="trackingMethod" class="block text-gray-700 text-sm font-bold mb-2">Tracking Method:</label>
+                <select id="trackingMethod" name="trackingMethod" class="bg-white border border-gray-300 text-gray-700 rounded leading-tight outline-none focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
+                    <option value="image">Image Embed</option>
+                    <option value="link">Link</option>
+                    <option value="form">Form Submission</option>
                 </select>
             </div>
-        `;
-    }
 
-    // Continue with the rest of the modal content
-    modalContentHTML += `
-        <div class="mt-4 text-sm">
-            <p class="text-sm font-bold mb-2">Generated URL:</p>
-            <pre id="generatedUrl" class="text-sm bg-gray-100 rounded p-2"></pre>
-        </div>
-        <div class="mt-4 text-sm">
-            <p class="text-sm font-bold mb-2">Embed Code:</p>
-            <pre id="embedCode" class="text-sm bg-gray-100 rounded p-2"></pre>
-        </div>
-        <button onclick="closeModal()" class="absolute top-2 right-2 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Close</button>
+            <!-- Event Type -->
+            <div class="mb-4" id="eventTypeContainer"></div>
+
+            <!-- Additional Options -->
+            <div class="mb-4" id="additionalOptions"></div>
+
+            <!-- Generated Code -->
+            <div class="mt-4">
+                <p class="text-sm font-bold mb-2">Generated Code:</p>
+                <pre id="generatedCode" class="text-sm bg-gray-100 rounded p-2"></pre>
+            </div>
+
+            <button onclick="closeModal()" class="absolute top-2 right-2 bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Close</button>
         </div>
     `;
 
@@ -530,80 +507,152 @@ function generateTracking(campaignId) {
     document.body.appendChild(modal);
 
     // Add event listeners and initial update
-    const eventTypeDropdown = document.getElementById('eventType');
-    const customEventTypeInput = document.getElementById('customEventType');
-    const redirectUrlInput = document.getElementById('redirectUrl');
-    const campaignIdElement = campaignId ? document.getElementById('campaignId') : document.getElementById('campaignIdInput');
-
-    // Update to show/hide the custom event type input based on selection
-    eventTypeDropdown.addEventListener('change', () => {
-        if (eventTypeDropdown.value === 'other') {
-            customEventTypeInput.classList.remove('hidden');
-            document.getElementById('redirectUrlInput').classList.add('hidden');
-        } else if (eventTypeDropdown.value === 'click') {
-            document.getElementById('redirectUrlInput').classList.remove('hidden');
-            customEventTypeInput.classList.add('hidden');
-        } else {
-            customEventTypeInput.classList.add('hidden');
-            document.getElementById('redirectUrlInput').classList.add('hidden');
-        }
-        updateTrackingInfo();
+    const trackingMethodDropdown = document.getElementById('trackingMethod');
+    trackingMethodDropdown.addEventListener('change', () => {
+        updateEventTypeOptions();
+        updateTrackingInfo(campaignId);
     });
 
-    customEventTypeInput.addEventListener('input', updateTrackingInfo);
-    redirectUrlInput.addEventListener('input', updateTrackingInfo);
-    if (!campaignId) {
-        campaignIdElement.addEventListener('input', updateTrackingInfo);
-    }
-
-    // Initial update
-    updateTrackingInfo();
+    updateEventTypeOptions();
+    updateTrackingInfo(campaignId);
 }
 
-function updateTrackingInfo() {
-    const host = window.location.protocol + "//" + window.location.host;
+function updateEventTypeOptions() {
+    const trackingMethod = document.getElementById('trackingMethod').value;
+    const eventTypeContainer = document.getElementById('eventTypeContainer');
+    let eventTypeOptionsHTML = '';
+
+    if (trackingMethod === 'form') {
+        eventTypeOptionsHTML = `
+            <label for="formAction" class="block text-gray-700 text-sm font-bold mb-2">Form Action:</label>
+            <select id="formAction" name="formAction" class="bg-white border border-gray-300 text-gray-700 rounded leading-tight outline-none focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
+                <option value="redirect">Redirect</option>
+                <option value="download">File Download</option>
+            </select>
+        `;
+    } else if (trackingMethod === 'link') {
+        eventTypeOptionsHTML = `<input type="hidden" id="eventType" value="click" />`;
+    } else { // image embed
+        eventTypeOptionsHTML = `
+            <label for="eventType" class="block text-gray-700 text-sm font-bold mb-2">Event Type:</label>
+            <select id="eventType" name="eventType" class="bg-white border border-gray-300 text-gray-700 rounded leading-tight outline-none focus:outline-none focus:bg-white focus:border-blue-500 appearance-none">
+                <option value="pageview">PageView</option>
+                <option value="email-open">Email-Open</option>
+                <option value="other">Other</option>
+            </select>
+            <input type="text" id="customEventType" name="customEventType" class="hidden mt-3 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter custom event type"/>
+        `;
+    }
+
+    eventTypeContainer.innerHTML = eventTypeOptionsHTML;
     const eventTypeDropdown = document.getElementById('eventType');
-    let eventType = eventTypeDropdown.value;
+    const formActionDropdown = document.getElementById('formAction');
 
-    // Get the campaign ID either from the provided variable or the input field
-    let campaignId = document.getElementById('campaignId') ? document.getElementById('campaignId').value : document.getElementById('campaignIdInput').value;
-
-    campaignId = campaignId.replaceAll(' ', '-')
-
-    const customEventTypeInput = document.getElementById('customEventType');
-
-    const redirectUrlInput = document.getElementById('redirectUrl');
-    let redirectUrl = '';
-    if (eventType === 'click') {
-        redirectUrl = redirectUrlInput.value;
+    // Extract campaignId from the URL path
+    const pathParts = window.location.pathname.split('/');
+    const campaignId = pathParts[pathParts.length - 1];
+    
+    if (eventTypeDropdown) {
+        eventTypeDropdown.addEventListener('change', () => {
+            updateAdditionalOptions();
+            updateTrackingInfo(campaignId);
+        });
     }
 
-    if (eventType === 'other' && customEventTypeInput.value) {
-        eventType = customEventTypeInput.value.replaceAll(' ', '-');
+    if (formActionDropdown) {
+        formActionDropdown.addEventListener('change', updateAdditionalOptions);
     }
 
-    // Only generate URL if campaignId is available
-    if (campaignId) {
-        // Generate URL based on selected values
-        const baseUrl = host + '/track';
-        const generatedUrl = `${baseUrl}/${eventType}.gif?campaignID=${campaignId}`;
-        const generatedUrlStyled = `${baseUrl}/<strong>${eventType}</strong>.gif?campaignID=<strong>${campaignId}</strong>`;
-        const generatedUrlStyledWithRedirect = `${baseUrl}/<strong>${eventType}</strong>?campaignID=<strong>${campaignId}</strong>&redirectURL=<strong>${redirectUrl}</strong>`
-        const generatedImgPath = `<img src="${generatedUrlStyled}" referrerpolicy="no-referrer-when-downgrade" alt="NanoTrack" />`;
-        const generatedLinkPath = `<a href="${generatedUrlStyledWithRedirect}">Some Link Text</a>`;
+    updateAdditionalOptions();
+}
 
-        if (eventType === 'click') {
-            document.getElementById('generatedUrl').innerHTML = generatedUrlStyledWithRedirect;
-            document.getElementById('embedCode').innerHTML = escapeHtml(generatedLinkPath);
-        } else {
-            document.getElementById('generatedUrl').innerHTML = generatedUrlStyled;
-            document.getElementById('embedCode').innerHTML = escapeHtml(generatedImgPath);
+function updateAdditionalOptions() {
+    const trackingMethod = document.getElementById('trackingMethod').value;
+    const formAction = document.getElementById('formAction') ? document.getElementById('formAction').value : '';
+    const additionalOptionsContainer = document.getElementById('additionalOptions');
+    let additionalOptionsHTML = '';
+
+    const campaignId = getCampaignIdFromUrl(); // Function to get campaignId from URL
+
+    if (trackingMethod === 'link') {
+        additionalOptionsHTML = `
+            <label for="redirectUrl" class="block text-gray-700 text-sm font-bold mb-2">Redirect URL:</label>
+            <input type="text" id="redirectUrl" name="redirectUrl" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter redirect URL (ex. https://google.com)"/>
+        `;
+        additionalOptionsContainer.innerHTML = additionalOptionsHTML;
+        document.getElementById('redirectUrl').addEventListener('input', () => updateTrackingInfo(campaignId));
+    } else if (trackingMethod === 'form') {
+        if (formAction === 'redirect') {
+            additionalOptionsHTML = `
+                <label for="redirectUrl" class="block text-gray-700 text-sm font-bold mb-2">Redirect URL:</label>
+                <input type="text" id="redirectUrl" name="redirectUrl" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter redirect URL (ex. https://google.com)"/>
+            `;
+        } else if (formAction === 'download') {
+            additionalOptionsHTML = `
+                <label for="fileDownloadPath" class="block text-gray-700 text-sm font-bold mb-2">File Download Path:</label>
+                <input type="text" id="fileDownloadPath" name="fileDownloadPath" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter file download path (ex. https://file-examples.com/wp-content/storage/2017/10/file-sample_150kB.pdf)"/>
+            `;
+        }
+        additionalOptionsContainer.innerHTML = additionalOptionsHTML;
+
+        const redirectUrlInput = document.getElementById('redirectUrl');
+        const fileDownloadPathInput = document.getElementById('fileDownloadPath');
+        const formActionInput = document.getElementById('formAction');
+
+        if (redirectUrlInput) {
+            redirectUrlInput.addEventListener('input', () => updateTrackingInfo(campaignId));
+        }
+        if (fileDownloadPathInput) {
+            fileDownloadPathInput.addEventListener('input', () => updateTrackingInfo(campaignId));
+        }
+        if (formActionInput) {
+            formActionInput.addEventListener('input', () => updateTrackingInfo(campaignId));
         }
     } else {
-        // Clear the displayed URL and embed code if campaignId is not available
-        document.getElementById('generatedUrl').textContent = '';
-        document.getElementById('embedCode').textContent = '';
+        additionalOptionsContainer.innerHTML = '';
     }
+}
+
+function getCampaignIdFromUrl() {
+    const pathParts = window.location.pathname.split('/');
+    return pathParts[pathParts.length - 1];
+}
+
+function updateTrackingInfo(campaignId) {
+    const host = window.location.protocol + "//" + window.location.host;
+    const trackingMethod = document.getElementById('trackingMethod').value;
+    const eventType = document.getElementById('eventType') ? document.getElementById('eventType').value : '';
+    const customEventType = document.getElementById('customEventType') ? document.getElementById('customEventType').value : '';
+    const redirectUrl = document.getElementById('redirectUrl') ? document.getElementById('redirectUrl').value : '';
+    const fileDownloadPath = document.getElementById('fileDownloadPath') ? document.getElementById('fileDownloadPath').value : '';
+    const formAction = document.getElementById('formAction') ? document.getElementById('formAction').value : '';
+
+    let eventPath = eventType === 'other' && customEventType ? customEventType : eventType;
+    let generatedUrl = `${host}/track/${eventPath}.gif?campaignID=${campaignId}`;
+    let generatedUrlWithRedirect = `${host}/track/${eventPath}?campaignID=${campaignId}&redirectURL=${encodeURIComponent(redirectUrl)}`;
+
+    let generatedCode = '';
+    if (trackingMethod === 'image') {
+        generatedCode = `<img src="${generatedUrl}" alt="NanoTrack" />`;
+    } else if (trackingMethod === 'link') {
+        generatedCode = `<a href="${generatedUrlWithRedirect}">Click here</a>`;
+    } else if (trackingMethod === 'form') {
+        generatedCode = `<form action="${host}/track/${formAction === 'download' ? 'formDownload' : 'formRedirect'}?campaignID=${campaignId}" method="post">
+            <input type="hidden" name="campaignID" value="${campaignId}">`;
+        
+        if (document.getElementById('formAction').value === 'redirect') {
+            generatedCode += `<input type="hidden" name="redirectUrl" value="${redirectUrl}">`;
+        } else if (document.getElementById('formAction').value === 'download') {
+            generatedCode += `<input type="hidden" name="fileDownloadPath" value="${fileDownloadPath}">`;
+        }
+        
+        generatedCode += `
+            <!-- Add other form fields here -->
+            <button type="submit"${formAction === 'download' ? ' formtarget="_blank"' : ''}>Submit</button>
+        </form>`;
+    }
+
+    document.getElementById('generatedCode').innerHTML = escapeHtml(generatedCode);
 }
 
 function escapeHtml(unsafe) {

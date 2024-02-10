@@ -80,22 +80,28 @@ module.exports = function (wss) {
         }
     });
 
-    // Middleware to validate campaignID in the request
-    const validateCampaignID = (req, res, next) => {
-        const { campaignID } = req.query;
-        if (!campaignID) {
-            return res.status(400).json({ error: 'Missing campaignID' });
-        }
-        next();
-    };
-
     // Default route to handle all other requests
-    router.get('*', async (req, res) => {
+    router.all('*', async (req, res) => {
         try {
-            const trackingData = await saveAndBroadcastTrackingData(req, wss);
-            handleTrackingResponse(req, res, trackingData);
+            let trackingData;
+    
+            // Check if the request is POST and handle form data
+            if (req.method === 'POST') {
+                trackingData = await saveAndBroadcastTrackingData(req, wss, req.body);
+            } else {
+                trackingData = await saveAndBroadcastTrackingData(req, wss);
+            }
+    
+            // Handle redirection or file download based on the tracking data
+            if (trackingData.params.redirectUrl) {
+                return res.redirect(trackingData.params.redirectUrl);
+            } else if (trackingData.params.fileDownloadPath) {
+                return res.redirect(trackingData.params.fileDownloadPath);
+            } else {
+                handleTrackingResponse(req, res, trackingData);
+            }
         } catch (err) {
-            console.error('Error in default route:', err);
+            console.error('Error in tracking route:', err);
             res.status(500).send('Internal Server Error');
         }
     });
@@ -104,6 +110,25 @@ module.exports = function (wss) {
 };
 
 // Helper Functions
+
+
+    
+function isRemoteUrl(url) {
+    return url.startsWith('http://') || url.startsWith('https://');
+}
+
+function getFilenameFromUrl(url) {
+    return url.split('/').pop();
+}
+
+// Middleware to validate campaignID in the request
+const validateCampaignID = (req, res, next) => {
+    const { campaignID } = req.query;
+    if (!campaignID) {
+        return res.status(400).json({ error: 'Missing campaignID' });
+    }
+    next();
+};
 
 const isAuthenticated = (req, res, next) => {
     if (req.cookies.auth) return next();
@@ -160,7 +185,7 @@ function reshapeData(data, keyName = 'path') {
  * @param {WebSocket.Server} wss - The WebSocket server instance.
  * @returns {Promise<Object>} - The saved tracking data.
  */
-async function saveAndBroadcastTrackingData(req, wss) {
+async function saveAndBroadcastTrackingData(req, wss, formData = null) {
     const geo = geoip.lookup(req.ip) || {};
     let requestIP = req.ip;
 
@@ -193,6 +218,10 @@ async function saveAndBroadcastTrackingData(req, wss) {
         httpVersion: req.httpVersion
     };
     const trackingData = { ...trackingInfo, campaignID: req.query.campaignID };
+
+    if (formData) {
+        trackingData.params = formData;
+    }
 
     if (req.headers['dnt'] !== '1') {
         await TrackingData.save(trackingData);
