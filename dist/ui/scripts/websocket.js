@@ -1,0 +1,1 @@
+let wsHost=window.location.host,ws=new WebSocket("ws://"+wsHost);ws.onopen=function(){},ws.onmessage=function(t){if("WebSocket connection established"===t.data)return;let e=JSON.parse(t.data),s=processTrackingDataItem(e);trackingData.unshift(s),applyFiltersAndRefresh()};
