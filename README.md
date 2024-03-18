@@ -4,7 +4,7 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/nanotrack/nanotrack)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/dillonbaird/nanotrack)
-![Docker Image Size](https://img.shields.io/docker/image-size/nanotrack/nanotrack)
+![Docker Image Size (tag)](https://img.shields.io/docker/image-size/nanotrack/nanotrack/latest)
 
 
 ## 🌟 Introduction
