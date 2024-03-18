@@ -144,7 +144,7 @@ If you prefer self-hosting, follow these steps:
          MONGO_INITDB_DATABASE: nanotrack
        volumes:
          - mongodb_data:/data/db
-         - ./mongo-init-scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+         - ./utils/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
 
    volumes:
      mongodb_data:  # Define a volume to persist MongoDB data
