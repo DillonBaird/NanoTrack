@@ -123,3 +123,4 @@ function changePage(increment) {
     // Add logic to handle boundaries (e.g., not going below page 1 or above the max page)
     fetchData(currentPage);
 }
+//# sourceMappingURL=uiHelpers.js.map

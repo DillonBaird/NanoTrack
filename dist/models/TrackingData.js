@@ -93,3 +93,4 @@ function hasModelMethod(db) {
 // Export an instance of TrackingDataAdapter using the TrackingData model
 const TrackingDataModel = mongoose_1.default.model('TrackingData', trackingDataSchema);
 exports.default = new TrackingDataAdapter(TrackingDataModel);
+//# sourceMappingURL=TrackingData.js.map

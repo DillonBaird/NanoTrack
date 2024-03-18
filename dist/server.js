@@ -144,3 +144,4 @@ function errorHandler(err, req, res, next) {
     console.error('Server error:', err.stack);
     res.status(500).send('Internal Server Error');
 }
+//# sourceMappingURL=server.js.map

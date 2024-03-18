@@ -179,3 +179,4 @@ searchInput.addEventListener('keyup', function (e) {
         filterData();
     }, 350);
 });
+//# sourceMappingURL=filters.js.map

@@ -389,3 +389,4 @@ document.addEventListener('DOMContentLoaded', function () {
         renderCampaignTables(trackingData);
     }).catch(error => console.error('Error in fetchData:', error));
 });
+//# sourceMappingURL=campaigns.js.map

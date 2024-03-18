@@ -1,13 +1,37 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const geoip_lite_1 = __importDefault(require("geoip-lite"));
+const express = require("express");
+const geoip = __importStar(require("geoip-lite"));
 const TrackingData_1 = __importDefault(require("../models/TrackingData"));
+const WebSocket = __importStar(require("ws"));
 function default_1(wss) {
-    const router = express_1.default.Router();
+    const router = express.Router();
     // Endpoint to retrieve paginated tracking data
     router.get('/api/tracking-data', isAuthenticated, async (req, res) => {
         try {
@@ -192,7 +216,7 @@ function reshapeData(data, keyName = 'path') {
  */
 async function saveAndBroadcastTrackingData(req, wss, formData = null) {
     var _a, _b, _c, _d;
-    const geo = geoip_lite_1.default.lookup(req.ip) || {};
+    const geo = geoip.lookup(req.ip) || {};
     let requestIP = req.ip;
     if (process.env.ANONYMIZE_IPS === 'true') {
         requestIP = '';
@@ -225,14 +249,15 @@ async function saveAndBroadcastTrackingData(req, wss, formData = null) {
     if (formData) {
         trackingData.params = formData;
     }
-    // if (req.headers['dnt'] !== '1') {
-    //     await TrackingData.save(trackingData);
-    //     wss.clients.forEach(client => {
-    //         if (client.readyState === WebSocket.OPEN) {
-    //             client.send(JSON.stringify(trackingData));
-    //         }
-    //     });
-    // }
+    if (req.headers['dnt'] !== '1') {
+        // @ts-expect-error TS2345
+        await TrackingData_1.default.save(trackingData);
+        wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify(trackingData));
+            }
+        });
+    }
     return trackingData;
 }
 /**
@@ -369,3 +394,4 @@ function generateInfoBlockContent() {
     <p>By choosing or visiting sites that use NanoTrack, you're part of a growing movement that values digital privacy. Together, we're shaping a future where web analytics and user privacy coexist harmoniously. If you have any questions or want to learn more about our practices, feel free to reach out. Your privacy, our priority – that's the NanoTrack promise.</p>
     `;
 }
+//# sourceMappingURL=tracking.js.map

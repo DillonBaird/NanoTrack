@@ -820,3 +820,4 @@ function populateList(containerId, counts, header1, header2, dataType) {
     tableContent += '</tbody></table>';
     container.innerHTML = tableContent;
 }
+//# sourceMappingURL=campaign.js.map

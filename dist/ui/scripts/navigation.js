@@ -42,3 +42,4 @@ document.addEventListener('DOMContentLoaded', () => {
     createNavbar();
     createFooter();
 });
+//# sourceMappingURL=navigation.js.map

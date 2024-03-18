@@ -88,3 +88,4 @@ function groupDataByCampaignId(data) {
         return acc;
     }, {});
 }
+//# sourceMappingURL=dataProcessing.js.map

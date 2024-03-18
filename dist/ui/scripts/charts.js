@@ -161,3 +161,4 @@ function getRandomColor() {
     }
     return color;
 }
+//# sourceMappingURL=charts.js.map

@@ -14,3 +14,4 @@ ws.onmessage = function (event) {
     trackingData.unshift(processedData);
     applyFiltersAndRefresh();
 };
+//# sourceMappingURL=websocket.js.map
