@@ -170,7 +170,7 @@ Track user interactions on specific web pages by embedding a tracking URL. For e
 ### Email Tracking
 Track email opens by embedding a tracking URL in the email. For instance, to track an email open for an `offer letter` sent to `email@example.com`, use:
 
-> http://**[your_server_ip]**/track/**email-open:dillon@dillonbaird.io**.gif?campaignID=**email-offerletter**
+> http://**[your_server_ip]**/track/**email-open:email@example.com**.gif?campaignID=**email-offerletter**
 
 ### Event Tracking
 Monitor specific user actions or events on your application. For instance, to track `user registrations`, you can embed a URL like this:
