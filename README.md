@@ -106,6 +106,9 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
   - [🛣 Roadmap](#-roadmap)
   - [📜 Changelog](#-changelog)
   - [🛠 Troubleshooting](#-troubleshooting)
+  - [Attributions and Licensing](#attributions-and-licensing)
+    - [Dependencies](#dependencies)
+    - [Development Dependencies](#development-dependencies)
 
 ## 🚀 Getting Started
 
@@ -357,3 +360,34 @@ Stay updated with our [Changelog](CHANGELOG.md).
 
 ## 🛠 Troubleshooting
 Common issues and their solutions in our [Troubleshooting Guide](TROUBLESHOOTING.md).
+
+## Attributions and Licensing 
+<!-- TODO: Verify information -->
+
+NanoTrack uses a number of open source projects to work properly. Here's a list of them along with their licenses:
+
+### Dependencies
+
+- **cookie-parser** - Simplified HTTP request cookie parsing. License: MIT
+- **dotenv** - Loads environment variables from a `.env` file. License: BSD-2-Clause
+- **express** - Fast, unopinionated, minimalist web framework for Node.js. License: MIT
+- **express-minify-html** - Express middleware to minify HTML responses. License: MIT
+- **express-useragent** - Express middleware for detecting user agents. License: MIT
+- **fs** - Filesystem utilities for Node.js (Note: This is a core module in Node.js and doesn't have its own license separate from Node.js).
+- **geoip-lite** - A light weight native JavaScript implementation of GeoIP API from MaxMind. License: MIT
+- **mongoose** - Elegant MongoDB object modeling for Node.js. License: MIT
+- **nocache** - Middleware to disable client-side caching. License: MIT
+- **node-fetch** - A light-weight module that brings `window.fetch` to Node.js. License: MIT
+- **ws** - A Node.js WebSocket library. License: MIT
+
+### Development Dependencies
+
+- **@babel/core**, **@babel/cli**, **@babel/preset-env**, etc. - Babel is a compiler for writing next generation JavaScript. License: MIT
+- **@types/...** - TypeScript definitions for various packages. These are community provided and typically MIT licensed.
+- **babel-loader**, **copy-webpack-plugin**, **html-loader**, **terser-webpack-plugin**, etc. - These packages are part of the Webpack ecosystem for bundling and optimizing assets and scripts. Licenses vary, mostly MIT.
+- **jest** - Delightful JavaScript Testing. License: MIT
+- **nodemon** - Simple monitor script for use during development of a Node.js app. License: MIT
+- **ts-node** - TypeScript execution and REPL for Node.js. License: MIT
+- **webpack**, **webpack-cli**, **webpack-node-externals**, **webpack-obfuscator** - Webpack is a static module bundler for modern JavaScript applications. License: MIT
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.

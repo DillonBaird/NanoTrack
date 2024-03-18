@@ -1,1 +1,16 @@
-let wsHost=window.location.host,ws=new WebSocket("ws://"+wsHost);ws.onopen=function(){},ws.onmessage=function(t){if("WebSocket connection established"===t.data)return;let e=JSON.parse(t.data),s=processTrackingDataItem(e);trackingData.unshift(s),applyFiltersAndRefresh()};
+"use strict";
+// This will dynamically get the current host and port
+let wsHost = window.location.host;
+let ws = new WebSocket('ws://' + wsHost);
+ws.onopen = function () {
+    console.log('WebSocket connection established');
+};
+ws.onmessage = function (event) {
+    if (event.data === 'WebSocket connection established') {
+        return;
+    }
+    let newData = JSON.parse(event.data);
+    let processedData = processTrackingDataItem(newData);
+    trackingData.unshift(processedData);
+    applyFiltersAndRefresh();
+};

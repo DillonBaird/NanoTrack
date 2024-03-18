@@ -1,1 +1,181 @@
-function applyFilter(e){document.getElementById("searchInput").value=e.textContent,filterData()}function clearFilters(){document.getElementById("searchInput").value="",document.getElementById("startDate").value="",document.getElementById("endDate").value="",document.getElementById("dateRangeSelector").value="",document.getElementById("customDateRange").style.display="none",currentSearchFilter="",currentStartDateFilter=null,currentEndDateFilter=null,applyFiltersAndRefresh()}function sortTable(e){let t,a,n,r,l,s,c,u,D=0;for(t=document.getElementById("trackingData"),n=!0,u="asc";n;){for(n=!1,a=t.rows,r=1;r<a.length-1;r++)if(c=!1,l=a[r].getElementsByTagName("TD")[e],s=a[r+1].getElementsByTagName("TD")[e],"asc"==u){if(l.innerHTML.toLowerCase()>s.innerHTML.toLowerCase()){c=!0;break}}else if("desc"==u&&l.innerHTML.toLowerCase()<s.innerHTML.toLowerCase()){c=!0;break}c?(a[r].parentNode.insertBefore(a[r+1],a[r]),n=!0,D++):0==D&&"asc"==u&&(u="desc",n=!0)}let i=[];for(let e=1;e<t.rows.length;e++)i.push(trackingData[t.rows[e].rowIndex-1])}function filterData(){currentSearchFilter=document.getElementById("searchInput").value.toLowerCase(),applyFiltersAndRefresh()}function filterDataByDate(){const e=document.getElementById("startDate").value,t=document.getElementById("endDate").value;e&&t?(currentStartDateFilter=new Date(e),currentEndDateFilter=new Date(t),isNaN(currentStartDateFilter.getTime())||isNaN(currentEndDateFilter.getTime())?(currentStartDateFilter=null,currentEndDateFilter=null):currentEndDateFilter.setDate(currentEndDateFilter.getDate()+1)):(currentStartDateFilter=null,currentEndDateFilter=null),applyFiltersAndRefresh()}document.getElementById("dateRangeSelector").addEventListener("change",(function(){const e=this.value;let t,a;const n=document.getElementById("customDateRange");if("custom"===e)return void(n.style.display="block");n.style.display="none";const r=new Date;switch(e){case"last24Hours":t=new Date(r.getTime()-864e5),a=r;break;case"yesterday":t=new Date(r.getFullYear(),r.getMonth(),r.getDate()-1),a=new Date(r.getFullYear(),r.getMonth(),r.getDate()-1);break;case"thisYear":t=new Date(r.getFullYear(),0,1),a=new Date(r.getFullYear(),11,31);break;case"allTime":a=new Date,t=new Date(a),t.setDate(a.getDate()-1e4);break;case"today":t=a=new Date;break;case"thisWeek":t=new Date,t.setDate(t.getDate()-t.getDay()),a=new Date(t),a.setDate(a.getDate()+6);break;case"last7Days":a=new Date,t=new Date(a),t.setDate(a.getDate()-6);break;case"thisMonth":t=new Date,t.setDate(1),a=new Date(t),a.setMonth(a.getMonth()+1),a.setDate(0);break;case"last30Days":a=new Date,t=new Date(a),t.setDate(a.getDate()-29);break;case"last90Days":a=new Date,t=new Date(a),t.setDate(a.getDate()-89);break;default:t=a=null,clearFilters()}t&&a&&(document.getElementById("startDate").value=t.toISOString().split("T")[0]||null,document.getElementById("endDate").value=a.toISOString().split("T")[0]||null,filterDataByDate())})),document.getElementById("startDate").addEventListener("change",filterDataByDate),document.getElementById("endDate").addEventListener("change",filterDataByDate);let searchInput=document.getElementById("searchInput"),searchTimeout=null;searchInput.addEventListener("keyup",(function(e){clearTimeout(searchTimeout),searchTimeout=setTimeout((function(){filterData()}),350)}));
+"use strict";
+function applyFilter(cell) {
+    document.getElementById('searchInput').value = cell.textContent;
+    filterData();
+}
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
+    document.getElementById('dateRangeSelector').value = ''; // Reset the select dropdown
+    // Hide the custom date range inputs when clearing filters
+    document.getElementById('customDateRange').style.display = 'none';
+    currentSearchFilter = '';
+    currentStartDateFilter = null;
+    currentEndDateFilter = null;
+    applyFiltersAndRefresh();
+}
+function sortTable(n) {
+    let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById("trackingData");
+    switching = true;
+    dir = "asc";
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+        }
+        else {
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+    let sortedData = [];
+    for (let i = 1; i < table.rows.length; i++) {
+        sortedData.push(trackingData[table.rows[i].rowIndex - 1]);
+    }
+    // updateChart(sortedData);
+    // updatePathChart(sortedData);
+}
+function filterData() {
+    currentSearchFilter = document.getElementById('searchInput').value.toLowerCase();
+    applyFiltersAndRefresh();
+}
+function filterDataByDate() {
+    console.log("Filtering by date...");
+    const startDateInput = document.getElementById('startDate').value;
+    const endDateInput = document.getElementById('endDate').value;
+    // Check if both start and end dates are provided
+    if (startDateInput && endDateInput) {
+        currentStartDateFilter = new Date(startDateInput);
+        currentEndDateFilter = new Date(endDateInput);
+        // Check if both dates are valid
+        if (!isNaN(currentStartDateFilter.getTime()) && !isNaN(currentEndDateFilter.getTime())) {
+            // Adjust the end date to be inclusive
+            currentEndDateFilter.setDate(currentEndDateFilter.getDate() + 1);
+        }
+        else {
+            // Reset filters if dates are invalid
+            currentStartDateFilter = null;
+            currentEndDateFilter = null;
+        }
+    }
+    else {
+        // Reset filters if any date is missing
+        currentStartDateFilter = null;
+        currentEndDateFilter = null;
+    }
+    console.log("Start Date:", currentStartDateFilter);
+    console.log("End Date:", currentEndDateFilter);
+    applyFiltersAndRefresh();
+}
+document.getElementById('dateRangeSelector').addEventListener('change', function () {
+    const selectedRange = this.value;
+    let startDate, endDate;
+    const customDateRangeDiv = document.getElementById('customDateRange');
+    if (selectedRange === 'custom') {
+        customDateRangeDiv.style.display = 'block';
+        return; // Exit the function early for custom range
+    }
+    else {
+        customDateRangeDiv.style.display = 'none';
+    }
+    const now = new Date();
+    switch (selectedRange) {
+        case 'last24Hours':
+            startDate = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+            endDate = now;
+            break;
+        case 'yesterday':
+            startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+            endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+            break;
+        case 'thisYear':
+            startDate = new Date(now.getFullYear(), 0, 1);
+            endDate = new Date(now.getFullYear(), 11, 31);
+            break;
+        case 'allTime':
+            endDate = new Date();
+            startDate = new Date(endDate);
+            startDate.setDate(endDate.getDate() - 10000);
+            break;
+        case 'today':
+            startDate = endDate = new Date();
+            break;
+        case 'thisWeek':
+            startDate = new Date();
+            startDate.setDate(startDate.getDate() - startDate.getDay());
+            endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + 6);
+            break;
+        case 'last7Days':
+            endDate = new Date();
+            startDate = new Date(endDate);
+            startDate.setDate(endDate.getDate() - 6);
+            break;
+        case 'thisMonth':
+            startDate = new Date();
+            startDate.setDate(1);
+            endDate = new Date(startDate);
+            endDate.setMonth(endDate.getMonth() + 1);
+            endDate.setDate(0);
+            break;
+        case 'last30Days':
+            endDate = new Date();
+            startDate = new Date(endDate);
+            startDate.setDate(endDate.getDate() - 29);
+            break;
+        case 'last90Days':
+            endDate = new Date();
+            startDate = new Date(endDate);
+            startDate.setDate(endDate.getDate() - 89);
+            break;
+        default:
+            startDate = endDate = null;
+            clearFilters();
+    }
+    if (startDate && endDate) {
+        document.getElementById('startDate').value = startDate.toISOString().split('T')[0] || null;
+        document.getElementById('endDate').value = endDate.toISOString().split('T')[0] || null;
+        filterDataByDate();
+    }
+});
+document.getElementById('startDate').addEventListener('change', filterDataByDate);
+document.getElementById('endDate').addEventListener('change', filterDataByDate);
+// Get the input box
+let searchInput = document.getElementById('searchInput');
+// Init a timeout variable to be used below
+let searchTimeout = null;
+// Listen for keystroke events
+searchInput.addEventListener('keyup', function (e) {
+    // Clear the timeout if it has already been set.
+    // This will prevent the previous task from executing
+    // if it has been less than <MILLISECONDS>
+    clearTimeout(searchTimeout);
+    // Make a new timeout set to go off in 1000ms (1 second)
+    searchTimeout = setTimeout(function () {
+        filterData();
+    }, 350);
+});

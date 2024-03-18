@@ -1,1 +1,163 @@
-let myChart,pathChart,campaignChart;function updateChart(t){if(document.getElementById("dataChart")){const e=document.getElementById("dataChart");if(!e)return;const a=e.getContext("2d");let r=t.reduce(((t,e)=>{const a=e.geo?.ip?.replace("::ffff:","").replace("::1","localhost")||"Unknown";return t[a]=(t[a]||0)+1,t}),{}),n=Object.keys(r),o=Object.values(r);myChart&&myChart.destroy(),myChart=new Chart(a,{type:"bar",data:{labels:n,datasets:[{label:"Number of Events per IP",data:o,backgroundColor:"rgba(54, 162, 235, 0.2)",borderColor:"rgba(54, 162, 235, 1)",borderWidth:1}]},options:{scales:{y:{beginAtZero:!0},x:{beginAtZero:!1,title:{display:!0,text:"IP Addresses"}}}}})}}function updatePathChart(t){const e=document.getElementById("pathChart");if(e){const a=e.getContext("2d");let r=t.reduce(((t,e)=>{let a=e.path.replaceAll(".gif","").replaceAll("/","")||"Unknown",r=new Date(e.decay).toISOString().split("T")[0];return t[a]=t[a]||{},t[a][r]=(t[a][r]||0)+1,t}),{}),n=Object.keys(r),o=[];n.forEach((t=>{o=o.concat(Object.keys(r[t]))}));let l=[...new Set(o)].sort(),d=n.map((t=>{let e=l.map((e=>({x:e,y:r[t][e]||0})));return{label:t,data:e,fill:!1,borderColor:getRandomColor(),tension:.1}}));pathChart&&pathChart.destroy(),pathChart=new Chart(a,{type:"line",data:{labels:l,datasets:d},options:{scales:{y:{beginAtZero:!0}}}})}}function updateCampaignChart(t){const e=document.getElementById("campaignChart");if(e){const a=e.getContext("2d");let r=t.reduce(((t,e)=>{let a=e.campaignID||"Unknown";return t[a]=(t[a]||0)+1,t}),{}),n=Object.keys(r),o=Object.values(r);campaignChart&&campaignChart.destroy(),campaignChart=new Chart(a,{type:"bar",data:{labels:n,datasets:[{label:"Number of Events per Campaign",data:o,backgroundColor:"rgba(255, 99, 132, 0.2)",borderColor:"rgba(255, 99, 132, 1)",borderWidth:1}]},options:{scales:{y:{beginAtZero:!0},x:{beginAtZero:!1,title:{display:!0,text:"Campaigns"}}}}})}}function getRandomColor(){for(var t="#",e=0;e<6;e++)t+="0123456789ABCDEF"[Math.floor(16*Math.random())];return t}
+"use strict";
+let myChart, pathChart, campaignChart; // Global chart variables
+function updateChart(data) {
+    const chartElement = document.getElementById('dataChart');
+    if (chartElement) {
+        const chartElement = document.getElementById('dataChart');
+        if (!chartElement)
+            return;
+        const ctx = chartElement.getContext('2d');
+        // Process the passed data for the chart
+        let ipCounts = data.reduce((acc, item) => {
+            var _a, _b;
+            const ip = ((_b = (_a = item.geo) === null || _a === void 0 ? void 0 : _a.ip) === null || _b === void 0 ? void 0 : _b.replace('::ffff:', '').replace('::1', 'localhost')) || 'Unknown';
+            acc[ip] = (acc[ip] || 0) + 1;
+            return acc;
+        }, {});
+        let labels = Object.keys(ipCounts);
+        let values = Object.values(ipCounts);
+        // Destroy the old chart if it exists
+        if (myChart) {
+            myChart.destroy();
+        }
+        // Create a new chart
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels, // Labels are the IPs
+                datasets: [{
+                        label: 'Number of Events per IP',
+                        data: values, // Values are the counts per IP
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                    x: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'IP Addresses'
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+function updatePathChart(data) {
+    const chartElement = document.getElementById('pathChart');
+    if (chartElement) {
+        const ctx = chartElement.getContext('2d');
+        // Process data for visits per path per day
+        let pathCounts = data.reduce((acc, item) => {
+            let path = item.path.replaceAll('.gif', '').replaceAll('/', '') || 'Unknown';
+            let itemDate = new Date(item.decay);
+            // Standardize the date format to YYYY-MM-DD
+            let date = itemDate.toISOString().split('T')[0];
+            acc[path] = acc[path] || {};
+            acc[path][date] = (acc[path][date] || 0) + 1;
+            return acc;
+        }, {});
+        let pathLabels = Object.keys(pathCounts);
+        // Generate an array of unique dates across all paths
+        let allDates = [];
+        pathLabels.forEach(path => {
+            allDates = allDates.concat(Object.keys(pathCounts[path]));
+        });
+        let uniqueDates = [...new Set(allDates)].sort();
+        let datasets = pathLabels.map(path => {
+            let counts = uniqueDates.map(date => {
+                return { x: date, y: pathCounts[path][date] || 0 };
+            });
+            return {
+                label: path,
+                data: counts,
+                fill: false,
+                borderColor: getRandomColor(),
+                tension: 0.1
+            };
+        });
+        // Destroy the old chart if it exists
+        if (pathChart) {
+            pathChart.destroy();
+        }
+        // Create a new chart
+        pathChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: uniqueDates,
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+}
+function updateCampaignChart(data) {
+    const chartElement = document.getElementById('campaignChart');
+    if (chartElement) {
+        const ctx = chartElement.getContext('2d');
+        // Aggregate counts per campaign
+        let campaignCounts = data.reduce((acc, item) => {
+            let campaignID = item.campaignID || 'Unknown';
+            acc[campaignID] = (acc[campaignID] || 0) + 1;
+            return acc;
+        }, {});
+        // Extract labels (Campaigns) and values (counts) from the aggregated data
+        let labels = Object.keys(campaignCounts);
+        let values = Object.values(campaignCounts);
+        // Destroy the old chart if it exists
+        if (campaignChart) {
+            campaignChart.destroy();
+        }
+        console.log(labels);
+        console.log(values);
+        // Create a new chart
+        campaignChart = new Chart(ctx, {
+            type: 'bar', // or 'pie', 'line', etc., depending on your preference
+            data: {
+                labels: labels, // Labels are the campaign names
+                datasets: [{
+                        label: 'Number of Events per Campaign',
+                        data: values, // Values are the counts per campaign
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                    x: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Campaigns'
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}

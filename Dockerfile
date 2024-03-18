@@ -16,19 +16,19 @@ RUN npm ci
 # Bundle app source
 COPY . .
 
-# # Build the application
-# RUN npm run build:js && npm prune --production
+# Build the application
+RUN npm run build && npm prune --production
 
-# # Stage 2: Runtime stage
-# FROM node:lts-alpine
+# Stage 2: Runtime stage
+FROM node:lts-alpine
 
-# # Copy built assets from builder stage
-# WORKDIR /usr/src/app
-# COPY --from=builder /usr/src/app .
+# Copy built assets from builder stage
+WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app .
 
-# # Expose the necessary port
-# EXPOSE 3001
+# Expose the necessary port
+EXPOSE 3001
 
 # Define the command to run the app
-# CMD [ "node", "dist/nanoTrack.js" ]
-CMD ["npm run dev"]
+CMD [ "node", "dist/server.js" ]
+# CMD ["npm run dev"]
