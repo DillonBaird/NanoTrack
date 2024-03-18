@@ -91,9 +91,6 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
     - [Event Tracking](#event-tracking)
     - [Click Tracking](#click-tracking)
     - [Advanced Parameter Tracking](#advanced-parameter-tracking)
-  - [📦 Installation](#-installation)
-    - [Docker Setup (Recommended)](#docker-setup-recommended)
-    - [Alternative Installation](#alternative-installation)
   - [🕹 Data Collected](#-data-collected)
   - [⚙️ Configuration Options](#️-configuration-options)
     - [📝 Environment Configuration](#-environment-configuration)
@@ -124,8 +121,7 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
 ### Self-Hosting
 If you prefer self-hosting, follow these steps:
 
-1. Clone this repository to your server.
-2. Deploy NanoTrack using Docker Compose. Create a `docker-compose.yml` file with the following content:
+1. Deploy NanoTrack using Docker Compose. Create a `docker-compose.yml` file with the following content:
 
    ```yaml
    version: '3'
@@ -159,8 +155,8 @@ If you prefer self-hosting, follow these steps:
      mongodb_data:  # Define a volume to persist MongoDB data
    ```
 
-3. Run `docker-compose up` to start the service.
-4. Embed the tracking pixel: `http://[your_server_ip]/track/action.gif?campaignID=your-campaign-id`
+2. Run `docker-compose up` to start the service.
+3. Embed the tracking pixel: `http://[your_server_ip]/track/action.gif?campaignID=your-campaign-id`
 
 
 ## 🌟 Usage Examples
@@ -199,19 +195,9 @@ NanoTrack also supports tracking of additional custom parameters. You can append
 
 This method allows for a highly detailed understanding of user behavior and preferences, making your analytics more robust and actionable.
 
-## 📦 Installation
-### Docker Setup (Recommended)
-Easy setup with Docker:
-```bash
-docker pull nanotrack/nanotrack
-docker run [options] nanotrack/nanotrack
-```
-### Alternative Installation
-For manual setups: Requires Node.js, npm, and MongoDB.
-
 ## 🕹 Data Collected
 - **User Agent**: Browser and device information.
-- **IP Address**: Geolocation data.
+- **IP Address** (optional): Geolocation data.
 - **Page Path and Timestamps**: User journey.
 - **Referrer Data**: Traffic sources.
 - **Custom Campaign IDs**: For specific tracking.
@@ -236,13 +222,7 @@ Here are some of the key configuration options available:
      PASSWORD=securepassword
      ```
 
-3. **Custom Tracking Image**
-   - `TRACKING_IMAGE_URL`: Optionally return a custom image instead of a transparent pixel. This can be used for transparency in tracking.
-     ```env
-     TRACKING_IMAGE_URL=http://example.com/your-image.png
-     ```
-
-4. **Disabling Specific Tracking Information**
+3. **Disabling Specific Tracking Information**
    - `DISABLE_IP_TRACKING`: Disable collecting IP addresses.
    - `DISABLE_USER_AGENT_TRACKING`: Disable collecting user agent data.
      ```env
@@ -250,7 +230,7 @@ Here are some of the key configuration options available:
      DISABLE_USER_AGENT_TRACKING=false
      ```
 
-5. **Other Configurations**
+4. **Other Configurations**
    - Additional options can be added here as your project evolves.
 
 ### 🛠️ Setting Up the `.env` File
@@ -259,7 +239,6 @@ Create a `.env` file in your project root and set your desired configuration opt
 DB_TYPE=mongodb
 USERNAME=admin
 PASSWORD=securepassword
-TRACKING_IMAGE_URL=http://example.com/your-image.png
 DISABLE_IP_TRACKING=true
 DISABLE_USER_AGENT_TRACKING=false
 ```

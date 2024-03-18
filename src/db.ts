@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 import { promises as fsPromises } from 'fs';
-import path from 'path';
+import * as path from 'path';
 
 // TypeScript doesn't have a built-in type for ErrnoException yet, so we define what we need:
 interface ErrnoException extends Error {

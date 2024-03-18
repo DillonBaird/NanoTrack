@@ -10,7 +10,7 @@ services:
       - "80:3001"
     environment:
       - NODE_ENV=production
-      - MONGO_URI=mongodb://nanotrack:nanotrack@mongodb:27017/nanotrack  # Use the hostname "nanotrack:nanotrack@mongodb" if using the mongodb in this compose
+      - MONGO_URI=mongodb://nanotrack:nanotrack@mongodb:27017/nanotrack  # Use the hostname "mongodb" if using the mongodb in this compose
       - PORT=3001
       - DB_TYPE=mongodb
       # - DB_TYPE=flatfile #only recommended for testing

@@ -1,8 +1,9 @@
-import express, { Request, Response, Router } from 'express';
+import express = require('express');
+import { Request, Response, Router } from 'express';
 import { Document } from 'mongoose';
-import geoip from 'geoip-lite';
+import * as geoip from 'geoip-lite';
 import TrackingData from '../models/TrackingData';
-import WebSocket from 'ws';
+import * as WebSocket from 'ws';
 
 export default function (wss: WebSocket.Server): Router {
     const router = express.Router();
@@ -248,15 +249,16 @@ async function saveAndBroadcastTrackingData(req: Request, wss: WebSocket.Server,
         trackingData.params = formData;
     }
 
-    // if (req.headers['dnt'] !== '1') {
-    //     await TrackingData.save(trackingData);
+    if (req.headers['dnt'] !== '1') {
+        // @ts-expect-error TS2345
+        await TrackingData.save(trackingData);
 
-    //     wss.clients.forEach(client => {
-    //         if (client.readyState === WebSocket.OPEN) {
-    //             client.send(JSON.stringify(trackingData));
-    //         }
-    //     });
-    // }
+        wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify(trackingData));
+            }
+        });
+    }
 
     return trackingData;
 }
