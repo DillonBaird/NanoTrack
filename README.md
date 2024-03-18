@@ -34,6 +34,13 @@ NanoTrack offers a fresh take on web analytics, focusing on simplicity and minim
 
 As NanoTrack continues to evolve in its beta phase, it represents a commitment to simplicity and ethical practices in web analytics. This project, rich with potential, invites users to not only leverage its current capabilities but also to contribute to its ongoing development, shaping a tool that embodies both efficiency and ethical responsibility.
 
+## 📸 Screenshots
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/27366ee8-332a-4f97-aeff-ee72a7acf5a3" width="48%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/bf1335c4-8c1e-41f7-8dc5-f22bdf44daf0" width="48%"><br/><br/>
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/fba25aac-a06c-4803-ac49-78134338d16b" width="48%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/0cde6aca-835a-4d28-b153-21a81ac94fae" width="48%"><br/><br/>
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/18566717-0d59-4fc3-bb4c-4267edb3e899" width="48%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/2a6b9a99-2378-4da5-9aa3-f6d7f95e5607" width="48%">
 
 ## 🌄 Background
 NanoTrack was born out of a simple yet profound idea: to shed light on the extensive data exchanged with every interaction on the internet. My initial inspiration was to create a project that would inform users and the internet at large about the staggering amount of data they unknowingly release with every call to a server. It was an attempt to raise awareness about data privacy expectations online, regardless of how diligently we try to block trackers.
@@ -65,6 +72,7 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
   - [🌟 Introduction](#-introduction)
   - [🎯 Use Cases](#-use-cases)
   - [✅ Core Features](#-core-features)
+  - [📸 Screenshots](#-screenshots)
   - [🌄 Background](#-background)
   - [🚧 Early-Release Beta Status](#-early-release-beta-status)
     - [Current Phase](#current-phase)
@@ -102,7 +110,6 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
   - [👥 Community and Contributors](#-community-and-contributors)
   - [📄 License](#-license)
   - [📞 Contact](#-contact)
-  - [📸 Screenshots](#-screenshots)
   - [🛣 Roadmap](#-roadmap)
   - [📜 Changelog](#-changelog)
   - [🛠 Troubleshooting](#-troubleshooting)
@@ -327,14 +334,6 @@ NanoTrack is under the [MIT License](LICENSE.md).
 
 ## 📞 Contact
 For support or inquiries, reach us at [Your Email/Contact Information].
-
-## 📸 Screenshots
-<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/27366ee8-332a-4f97-aeff-ee72a7acf5a3" width="48%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/bf1335c4-8c1e-41f7-8dc5-f22bdf44daf0" width="48%"><br/><br/>
-<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/fba25aac-a06c-4803-ac49-78134338d16b" width="48%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/0cde6aca-835a-4d28-b153-21a81ac94fae" width="48%"><br/><br/>
-<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/18566717-0d59-4fc3-bb4c-4267edb3e899" width="48%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://github.com/DillonBaird/NanoTrack/assets/51871843/2a6b9a99-2378-4da5-9aa3-f6d7f95e5607" width="48%">
 
 
 ## 🛣 Roadmap
