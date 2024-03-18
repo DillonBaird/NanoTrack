@@ -3,6 +3,9 @@
 [![Build and Push Docker Image](https://github.com/DillonBaird/NanoTrack/actions/workflows/docker-build.yml/badge.svg?branch=master)](https://github.com/DillonBaird/NanoTrack/actions/workflows/docker-build.yml)
 ![Docker Pulls](https://img.shields.io/docker/pulls/nanotrack/nanotrack)
 ![License](https://img.shields.io/badge/license-MIT-blue)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/dillonbaird/nanotrack)
+![Docker Image Size](https://img.shields.io/docker/image-size/nanotrack/nanotrack)
+
 
 ## 🌟 Introduction
 NanoTrack redefines web analytics with its minimalistic yet powerful approach to user activity tracking. Designed for performance-conscious developers and marketers, it ensures efficient data collection without the need for heavy JavaScript libraries, aligning with modern standards of ethical web practices.
@@ -107,7 +110,7 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
     - [Load Time and Performance Impact](#load-time-and-performance-impact)
     - [Practical Implications](#practical-implications)
   - [🤝 Contributing to NanoTrack](#-contributing-to-nanotrack)
-  - [👥 Community and Contributors](#-community-and-contributors)
+  - [👥 Contributors](#-contributors)
   - [📄 License](#-license)
   - [📞 Contact](#-contact)
   - [🛣 Roadmap](#-roadmap)
@@ -326,11 +329,20 @@ In essence, while Google Analytics provides comprehensive analytics capabilities
 ## 🤝 Contributing to NanoTrack
 I welcome contributions that enhance NanoTrack's efficiency and ethics. See [Contribution Guidelines](docs/CONTRIBUTING.md).
 
-## 👥 Community and Contributors
-Join our community! Check our [Contributors' Gallery](docs/CONTRIBUTORS.md) and [Discord Channel](#).
+## 👥 Contributors
+Join our community!
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## 📄 License
-NanoTrack is under the [MIT License](LICENSE.md).
+NanoTrack is under the [MIT License](LICENSE).
 
 ## 📞 Contact
 For support or inquiries, reach us at [Your Email/Contact Information].
