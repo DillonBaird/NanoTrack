@@ -29,21 +29,6 @@ exports.webSocketServer = webSocketServer;
 configureWebSocketServer(webSocketServer);
 // Route Configuration
 configureRoutes(app, webSocketServer);
-// HTML Minification
-// app.use(
-//     minifyHTML({
-//         override: true,
-//         exception_url: false,
-//         htmlMinifier: {
-//             removeComments: true,
-//             collapseWhitespace: true,
-//             collapseBooleanAttributes: true,
-//             removeAttributeQuotes: true,
-//             removeEmptyAttributes: true,
-//             minifyJS: true,
-//         },
-//     })
-// );
 // Server Activation
 const PORT = process.env.PORT ? Number(process.env.PORT) : 80;
 httpServer.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
@@ -70,9 +55,11 @@ function configureRoutes(app, wsServer) {
     app.use('/dashboard', isAuthenticated);
     app.use('/campaigns', isAuthenticated);
     app.use('/campaigns/:campaignId', isAuthenticated);
+    app.get('/', (req, res) => {
+        res.redirect('/dashboard');
+    });
     // HTML Content Routes
     const htmlPaths = {
-        '/': '/dashboard',
         '/login': '/ui/login.html',
         '/dashboard': '/ui/dashboard.html',
         '/campaigns': '/ui/campaigns.html',
