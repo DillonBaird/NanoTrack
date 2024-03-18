@@ -1,0 +1,21 @@
+{
+  "projectName": "NanoTrack",
+  "projectOwner": "DillonBaird",
+  "files": [
+    "README.md"
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "contributors": [
+    {
+      "login": "DillonBaird",
+      "name": "Dillon M. Baird",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51871843?v=4",
+      "profile": "https://github.com/DillonBaird",
+      "contributions": [
+        "projectManagement"
+      ]
+    }
+  ]
+}
