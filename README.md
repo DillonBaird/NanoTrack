@@ -335,6 +335,13 @@ Join our community!
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/DillonBaird"><img src="https://avatars.githubusercontent.com/u/51871843?v=4?s=100" width="100px;" alt="Dillon M. Baird"/><br /><sub><b>Dillon M. Baird</b></sub></a><br /><a href="#projectManagement-DillonBaird" title="Project Management">📆</a></td>
+    </tr>
+  </tbody>
+</table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
