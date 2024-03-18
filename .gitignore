@@ -3,4 +3,3 @@
 /node_modules
 .DS_Store
 NanoTrack-DB.json
-dist/
