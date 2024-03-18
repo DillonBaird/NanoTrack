@@ -1,10 +1,17 @@
 import express, { Request, Response, Router } from 'express';
+import { Document } from 'mongoose';
 import geoip from 'geoip-lite';
 import TrackingData from '../models/TrackingData';
 import WebSocket from 'ws';
 
 export default function (wss: WebSocket.Server): Router {
     const router = express.Router();
+
+    interface Geo {
+        ip: string;
+        city: string;
+        country: string;
+    }
 
     // Endpoint to retrieve paginated tracking data
     router.get('/api/tracking-data', isAuthenticated, async (req: Request, res: Response) => {
@@ -37,7 +44,7 @@ export default function (wss: WebSocket.Server): Router {
             const campaignCounts: { [key: string]: { [key: string]: number } } = {};
 
             allTrackingData.forEach(item => {
-                const { path = 'Unknown', decay, geo = {}, campaignID = 'Unknown' } = item;
+                const { path = 'Unknown', decay, geo = {} as Geo, campaignID = 'Unknown' } = item;
                 const date = new Date(decay).toLocaleDateString();
                 const ip = geo.ip || 'Unknown';
 
@@ -148,10 +155,10 @@ function incrementCounts(counts: { [key: string]: { [key: string]: number } | nu
         if (typeof counts[key] !== 'object') {
             counts[key] = {};
         }
-        
+
         // Now TypeScript knows counts[key] is an object due to the above check
         const subCounts = counts[key] as { [key: string]: number };
-        
+
         // Increment the count for the subKey
         subCounts[subKey] = (subCounts[subKey] || 0) + 1;
     } else {
@@ -162,7 +169,7 @@ function incrementCounts(counts: { [key: string]: { [key: string]: number } | nu
             console.error('Expected a number, found an object. This key should not have subkeys.');
             return;
         }
-        
+
         // Increment or initialize the count for the key
         counts[key] = (counts[key] as number || 0) + 1;
     }
@@ -241,15 +248,15 @@ async function saveAndBroadcastTrackingData(req: Request, wss: WebSocket.Server,
         trackingData.params = formData;
     }
 
-    if (req.headers['dnt'] !== '1') {
-        await TrackingData.save(trackingData);
+    // if (req.headers['dnt'] !== '1') {
+    //     await TrackingData.save(trackingData);
 
-        wss.clients.forEach(client => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify(trackingData));
-            }
-        });
-    }
+    //     wss.clients.forEach(client => {
+    //         if (client.readyState === WebSocket.OPEN) {
+    //             client.send(JSON.stringify(trackingData));
+    //         }
+    //     });
+    // }
 
     return trackingData;
 }

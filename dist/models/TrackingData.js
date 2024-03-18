@@ -1,32 +1,36 @@
 "use strict";
-const mongoose = require('mongoose');
-const { getDB } = require('../db'); // Importing getDB from db.js
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
+const db_1 = require("../db");
 /**
  * Schema definition for tracking data using Mongoose.
  */
-const trackingDataSchema = new mongoose.Schema({
+const trackingDataSchema = new mongoose_1.default.Schema({
     host: String,
     referrer: String,
-    params: mongoose.Schema.Types.Mixed,
+    params: mongoose_1.default.Schema.Types.Mixed,
     path: String,
     decay: Number,
     useragent: {
         browser: String,
         version: String,
-        device: String, // Type of device (mobile/desktop)
-        os: String, // Operating System
+        device: String,
+        os: String,
     },
     language: [String],
     geo: {
         ip: String,
-        city: String, // City determined via geoip lookup
-        country: String // Country determined via geoip lookup
+        city: String,
+        country: String,
     },
     domain: String,
     timestamp: { type: Date, default: Date.now },
-    acceptHeaders: String, // HTTP Accept Headers
-    dnt: String, // Do Not Track preference
-    httpVersion: String, // HTTP Protocol Version
+    acceptHeaders: String,
+    dnt: String,
+    httpVersion: String,
     campaignID: {
         type: String,
         required: true,
@@ -45,12 +49,12 @@ class TrackingDataAdapter {
      * @returns {Promise} - Promise resolving with the saved document.
      */
     async save(document) {
-        const db = getDB();
-        if (db.model) {
+        const db = (0, db_1.getDB)();
+        if (hasModelMethod(db)) {
             return new this.model(document).save();
         }
         else {
-            return db.save(document); // Fallback for flat file database
+            return db.save(document);
         }
     }
     /**
@@ -59,12 +63,12 @@ class TrackingDataAdapter {
      * @returns {Promise<Array>} - Promise resolving with an array of matched documents.
      */
     async find(query) {
-        const db = getDB();
-        if (db.model) {
+        const db = (0, db_1.getDB)();
+        if (hasModelMethod(db)) {
             return this.model.find(query);
         }
         else {
-            return db.find(query); // Fallback for flat file database
+            return db.find(query);
         }
     }
     /**
@@ -73,16 +77,19 @@ class TrackingDataAdapter {
      * @returns {Promise} - Promise resolving with the result of the deletion operation.
      */
     async deleteMany(campaignID) {
-        const db = getDB();
-        if (db.model) {
+        const db = (0, db_1.getDB)();
+        if (hasModelMethod(db)) {
             return this.model.deleteMany({ campaignID });
         }
         else {
-            return db.deleteMany({ campaignID }); // Fallback for flat file database
-            // Consider throwing an error if method is not implemented for flat file DB
+            return db.deleteMany({ campaignID });
         }
     }
 }
+// Type guard to check if 'db' can be treated as a mongoose-like instance
+function hasModelMethod(db) {
+    return db && typeof db.model === 'function';
+}
 // Export an instance of TrackingDataAdapter using the TrackingData model
-const TrackingDataModel = mongoose.model('TrackingData', trackingDataSchema);
-module.exports = new TrackingDataAdapter(TrackingDataModel);
+const TrackingDataModel = mongoose_1.default.model('TrackingData', trackingDataSchema);
+exports.default = new TrackingDataAdapter(TrackingDataModel);

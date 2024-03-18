@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { promises as fsPromises } from 'fs';
 import path from 'path';
 
@@ -14,6 +14,37 @@ interface Item {
     id: number;
     name: string;
     // Add additional properties as needed.
+}
+
+interface UserAgent {
+    browser: string;
+    version: string;
+    device: string;
+    os: string;
+}
+
+interface Geo {
+    ip: string;
+    city: string;
+    country: string;
+}
+
+interface TrackingDataDocument extends Document {
+    [key: string]: any;
+    host: string;
+    referrer: string;
+    params: any;
+    path: string;
+    decay: number;
+    useragent: UserAgent;
+    language: string[];
+    geo: Geo;
+    domain: string;
+    timestamp: Date;
+    acceptHeaders: string;
+    dnt: string;
+    httpVersion: string;
+    campaignID: string;
 }
 
 /**
@@ -51,7 +82,7 @@ class FlatFileDB {
      * @param {Object} data The data to save.
      * @returns {Promise<Object>} The saved data.
      */
-    async save(data: object): Promise<object> {
+    async save(data: TrackingDataDocument): Promise<TrackingDataDocument> {
         try {
             const fileData = await fsPromises.readFile(this.filePath, 'utf8');
             const jsonData = JSON.parse(fileData);
@@ -63,38 +94,38 @@ class FlatFileDB {
             throw new Error(`Error saving data: ${err.message}`);
         }
     }
-    
+
 
     /**
      * Finds data in the database that matches the given query.
      * @param {Object} query The query to match against.
      * @returns {Promise<Array<Item>>} The matched data.
      */
-    async find(query: Record<string, any> = {}): Promise<Array<Item>> {
+    async find(query: Partial<TrackingDataDocument> = {}): Promise<Array<TrackingDataDocument>> {
         try {
             const fileData = await fsPromises.readFile(this.filePath, 'utf8');
-            const jsonData: Array<Item> = JSON.parse(fileData);
+            const jsonData: Array<TrackingDataDocument> = JSON.parse(fileData);
             return jsonData.filter(item =>
                 Object.keys(query).every(key =>
-                    item[key as keyof Item] === query[key]
+                    item[key] === query[key]
                 )
             );
         } catch (error) {
             const err = error as ErrnoException; // Cast the error
             throw new Error(`Error querying data: ${err.message}`);
         }
-    }    
-    
+    }
+
 
     /**
      * Deletes records from the database that match the given query.
      * @param {Object} query The query to match for deletion.
      * @returns {Promise<{deletedCount: number}>} The result of the deletion operation.
      */
-    async deleteMany(query: Record<string, any>): Promise<{ deletedCount: number }> {
+    async deleteMany(query: Partial<TrackingDataDocument>): Promise<{ deletedCount: number }> {
         try {
             const fileData = await fsPromises.readFile(this.filePath, 'utf8');
-            const jsonData: Array<any> = JSON.parse(fileData);
+            const jsonData: Array<TrackingDataDocument> = JSON.parse(fileData);
             const updatedData = jsonData.filter(item =>
                 !Object.keys(query).every(key => item[key] === query[key])
             );
@@ -105,7 +136,7 @@ class FlatFileDB {
             throw new Error(`Error deleting data: ${err.message}`);
         }
     }
-    
+
 }
 
 /**

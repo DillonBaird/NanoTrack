@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const geoip_lite_1 = __importDefault(require("geoip-lite"));
 const TrackingData_1 = __importDefault(require("../models/TrackingData"));
-const ws_1 = __importDefault(require("ws"));
 function default_1(wss) {
     const router = express_1.default.Router();
     // Endpoint to retrieve paginated tracking data
@@ -226,14 +225,14 @@ async function saveAndBroadcastTrackingData(req, wss, formData = null) {
     if (formData) {
         trackingData.params = formData;
     }
-    if (req.headers['dnt'] !== '1') {
-        await TrackingData_1.default.save(trackingData);
-        wss.clients.forEach(client => {
-            if (client.readyState === ws_1.default.OPEN) {
-                client.send(JSON.stringify(trackingData));
-            }
-        });
-    }
+    // if (req.headers['dnt'] !== '1') {
+    //     await TrackingData.save(trackingData);
+    //     wss.clients.forEach(client => {
+    //         if (client.readyState === WebSocket.OPEN) {
+    //             client.send(JSON.stringify(trackingData));
+    //         }
+    //     });
+    // }
     return trackingData;
 }
 /**
