@@ -317,10 +317,10 @@ NanoTrack offers a lightweight alternative to Google Analytics, focusing on mini
 In essence, while Google Analytics provides comprehensive analytics capabilities, NanoTrack stands out for its minimalistic approach, prioritizing performance and speed, especially critical for sites where user experience and page load times are paramount.
 
 ## 🤝 Contributing to NanoTrack
-I welcome contributions that enhance NanoTrack's efficiency and ethics. See [Contribution Guidelines](CONTRIBUTING.md).
+I welcome contributions that enhance NanoTrack's efficiency and ethics. See [Contribution Guidelines](docs/CONTRIBUTING.md).
 
 ## 👥 Community and Contributors
-Join our community! Check our [Contributors' Gallery](CONTRIBUTORS.md) and [Discord Channel](#).
+Join our community! Check our [Contributors' Gallery](docs/CONTRIBUTORS.md) and [Discord Channel](#).
 
 ## 📄 License
 NanoTrack is under the [MIT License](LICENSE.md).
@@ -353,13 +353,13 @@ For support or inquiries, reach us at [Your Email/Contact Information].
 - Machine Learning Insights
 - A/B Testing
 - Integration with 3rd Party Tools
-- More on our [Roadmap](ROADMAP.md).
+- More on our [Roadmap](docs/ROADMAP.md).
 
 ## 📜 Changelog
 Stay updated with our [Changelog](CHANGELOG.md).
 
 ## 🛠 Troubleshooting
-Common issues and their solutions in our [Troubleshooting Guide](TROUBLESHOOTING.md).
+Common issues and their solutions in our [Troubleshooting Guide](docs/TROUBLESHOOTING.md).
 
 ## Attributions and Licensing 
 <!-- TODO: Verify information -->
