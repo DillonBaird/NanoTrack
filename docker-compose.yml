@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  nanotrack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nanotrack/nanotrack:latest
+    ports:
+      - "80:3001"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://nanotrack:nanotrack@mongodb:27017/nanotrack  # Use the hostname "mongodb" if using the mongodb in this compose
+      - PORT=3001
+      - DB_TYPE=mongodb
+      # - DB_TYPE=flatfile #only recommended for testing
+      - USERNAME=nanotrack
+      - PASSWORD=admin
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: nanotrack
+    volumes:
+      - mongodb_data:/data/db
+      - ./utils/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+
+volumes:
+  mongodb_data:  # Volume to persist MongoDB data
