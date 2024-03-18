@@ -4,7 +4,7 @@ All notable changes to NanoTrack will be documented in this file. NanoTrack foll
 
 ## [Unreleased]
 
-## [1.0.0] - YYYY-MM-DD
+## [1.0.0-beta] - YYYY-MM-DD
 
 ### Added
 
