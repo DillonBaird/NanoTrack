@@ -74,9 +74,12 @@ function configureRoutes(app: Application, wsServer: WebSocket.Server): void {
     app.use('/campaigns', isAuthenticated);
     app.use('/campaigns/:campaignId', isAuthenticated);
 
+    app.get('/', (req: Request, res: Response) => {
+        res.redirect('/dashboard');
+    });
+
     // HTML Content Routes
     const htmlPaths: { [key: string]: string } = {
-        '/': '/dashboard',
         '/login': '/ui/login.html',
         '/dashboard': '/ui/dashboard.html',
         '/campaigns': '/ui/campaigns.html',
