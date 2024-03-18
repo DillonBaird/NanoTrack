@@ -1,0 +1,56 @@
+# Node.js
+node_modules
+npm-debug.log
+npm-debug.log.*
+yarn-error.log
+yarn-debug.log
+.yarn-integrity
+.pnp/
+.pnp.js
+
+# Git
+.git
+.gitignore
+
+# Logs
+logs
+*.log
+*.log.*
+
+# Dependency directories
+bower_components
+.jspm
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Build output
+/dist
+
+# Flatfile DB
+NanoTrack-DB.json
+
+# Editor directories and files
+.idea
+*.swp
+*.swo
+.vscode
+*.sublime-workspace
+*.sublime-project
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Other
+*.tar.gz
+*.zip
+*.rar
+*.7z
+*.gz
+*.bz2
+*.tgz
