@@ -27,22 +27,6 @@ configureWebSocketServer(webSocketServer);
 // Route Configuration
 configureRoutes(app, webSocketServer);
 
-// HTML Minification
-// app.use(
-//     minifyHTML({
-//         override: true,
-//         exception_url: false,
-//         htmlMinifier: {
-//             removeComments: true,
-//             collapseWhitespace: true,
-//             collapseBooleanAttributes: true,
-//             removeAttributeQuotes: true,
-//             removeEmptyAttributes: true,
-//             minifyJS: true,
-//         },
-//     })
-// );
-
 // Server Activation
 const PORT: number = process.env.PORT ? Number(process.env.PORT) : 80;
 httpServer.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
