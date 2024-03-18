@@ -168,7 +168,7 @@ Track user interactions on specific web pages by embedding a tracking URL. For e
 > http://**[your_server_ip]**/track/**pageview**.gif?campaignID=**dillonbaird.io**
 
 ### Email Tracking
-Track email opens by embedding a tracking URL in the email. For instance, to track an email open for an `offer letter` sent to `dillon@dillonbaird.io`, use:
+Track email opens by embedding a tracking URL in the email. For instance, to track an email open for an `offer letter` sent to `email@example.com`, use:
 
 > http://**[your_server_ip]**/track/**email-open:dillon@dillonbaird.io**.gif?campaignID=**email-offerletter**
 
