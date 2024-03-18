@@ -1,5 +1,5 @@
 {
-    "name": "NanoTrack",
+    "name": "nanotrack",
     "version": "1.0.0",
     "description": "1x1 Nano-Size Spy-Pixel Analytics",
     "main": "dist/server.js",
