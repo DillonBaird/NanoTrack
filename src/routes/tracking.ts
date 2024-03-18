@@ -1,19 +1,19 @@
-const express = require('express');
-const geoip = require('geoip-lite');
-const TrackingData = require('../models/TrackingData');
-const WebSocket = require('ws');
+import express, { Request, Response, Router } from 'express';
+import geoip from 'geoip-lite';
+import TrackingData from '../models/TrackingData';
+import WebSocket from 'ws';
 
-module.exports = function (wss) {
+export default function (wss: WebSocket.Server): Router {
     const router = express.Router();
 
     // Endpoint to retrieve paginated tracking data
-    router.get('/api/tracking-data', isAuthenticated, async (req, res) => {
+    router.get('/api/tracking-data', isAuthenticated, async (req: Request, res: Response) => {
         try {
-            const page = parseInt(req.query.page, 10) || 1;
-            const limit = parseInt(req.query.limit, 10) || 10;
-            const skip = (page - 1) * limit;
+            const page: number = parseInt(req.query.page as string, 10) || 1;
+            const limit: number = parseInt(req.query.limit as string, 10) || 10;
+            const skip: number = (page - 1) * limit;
             const data = await TrackingData.find({});
-            const total = data.length;
+            const total: number = data.length;
             const paginatedData = data.reverse().slice(skip, skip + limit);
 
             res.json({
@@ -29,10 +29,12 @@ module.exports = function (wss) {
     });
 
     // Endpoint to retrieve data for charts
-    router.get('/api/chart-data', isAuthenticated, async (req, res) => {
+    router.get('/api/chart-data', isAuthenticated, async (req: Request, res: Response) => {
         try {
             const allTrackingData = await TrackingData.find({});
-            const pathCounts = {}, ipCounts = {}, campaignCounts = {};
+            const pathCounts: { [key: string]: { [key: string]: number } } = {};
+            const ipCounts: { [key: string]: { [key: string]: number } } = {};
+            const campaignCounts: { [key: string]: { [key: string]: number } } = {};
 
             allTrackingData.forEach(item => {
                 const { path = 'Unknown', decay, geo = {}, campaignID = 'Unknown' } = item;
@@ -52,7 +54,7 @@ module.exports = function (wss) {
     });
 
     // Endpoint to retrieve campaign-specific data
-    router.get('/api/campaign/:campaignId', isAuthenticated, async (req, res) => {
+    router.get('/api/campaign/:campaignId', isAuthenticated, async (req: Request, res: Response) => {
         try {
             const { campaignId } = req.params;
             const campaignData = await TrackingData.find({ campaignID: campaignId });
@@ -69,10 +71,10 @@ module.exports = function (wss) {
     });
 
     // Endpoint to delete a specific campaign
-    router.delete('/api/campaign/:campaignID', isAuthenticated, async (req, res) => {
+    router.delete('/api/campaign/:campaignID', isAuthenticated, async (req: Request, res: Response) => {
         try {
             const { campaignID } = req.params;
-            await TrackingData.deleteMany({ campaignID });
+            await TrackingData.deleteMany({ campaignID } as unknown as string);
             res.status(200).json({ message: 'Campaign deleted successfully' });
         } catch (err) {
             console.error('Error deleting campaign:', err);
@@ -81,22 +83,22 @@ module.exports = function (wss) {
     });
 
     // Default route to handle all other requests
-    router.all('*', async (req, res) => {
+    router.all('*', async (req: Request, res: Response) => {
         try {
             let trackingData;
-    
+
             // Check if the request is POST and handle form data
             if (req.method === 'POST') {
                 trackingData = await saveAndBroadcastTrackingData(req, wss, req.body);
             } else {
                 trackingData = await saveAndBroadcastTrackingData(req, wss);
             }
-    
+
             // Handle redirection or file download based on the tracking data
             if (trackingData.params.redirectUrl) {
-                return res.redirect(trackingData.params.redirectUrl);
+                return res.redirect(trackingData.params.redirectUrl as string);
             } else if (trackingData.params.fileDownloadPath) {
-                return res.redirect(trackingData.params.fileDownloadPath);
+                return res.redirect(trackingData.params.fileDownloadPath as string);
             } else {
                 handleTrackingResponse(req, res, trackingData);
             }
@@ -111,18 +113,16 @@ module.exports = function (wss) {
 
 // Helper Functions
 
-
-    
-function isRemoteUrl(url) {
+function isRemoteUrl(url: string): boolean {
     return url.startsWith('http://') || url.startsWith('https://');
 }
 
-function getFilenameFromUrl(url) {
-    return url.split('/').pop();
+function getFilenameFromUrl(url: string): string {
+    return url.split('/').pop() || '';
 }
 
 // Middleware to validate campaignID in the request
-const validateCampaignID = (req, res, next) => {
+const validateCampaignID = (req: Request, res: Response, next: Function) => {
     const { campaignID } = req.query;
     if (!campaignID) {
         return res.status(400).json({ error: 'Missing campaignID' });
@@ -130,7 +130,7 @@ const validateCampaignID = (req, res, next) => {
     next();
 };
 
-const isAuthenticated = (req, res, next) => {
+const isAuthenticated = (req: Request, res: Response, next: Function) => {
     if (req.cookies.auth) return next();
     res.redirect('/login');
 };
@@ -142,14 +142,32 @@ const isAuthenticated = (req, res, next) => {
  * @param {String} key - The primary key.
  * @param {String} [subKey] - The optional sub-key.
  */
-function incrementCounts(counts, key, subKey = null) {
+function incrementCounts(counts: { [key: string]: { [key: string]: number } | number }, key: string, subKey: string | null = null) {
     if (subKey) {
-        counts[key] = counts[key] || {};
-        counts[key][subKey] = (counts[key][subKey] || 0) + 1;
+        // Ensure the nested structure exists
+        if (typeof counts[key] !== 'object') {
+            counts[key] = {};
+        }
+        
+        // Now TypeScript knows counts[key] is an object due to the above check
+        const subCounts = counts[key] as { [key: string]: number };
+        
+        // Increment the count for the subKey
+        subCounts[subKey] = (subCounts[subKey] || 0) + 1;
     } else {
-        counts[key] = (counts[key] || 0) + 1;
+        // When there's no subKey, work directly with counts[key] as a number
+        // This requires telling TypeScript counts[key] can be a number in this case
+        if (typeof counts[key] === 'object') {
+            // Handle error or convert object to number if it makes sense in your context
+            console.error('Expected a number, found an object. This key should not have subkeys.');
+            return;
+        }
+        
+        // Increment or initialize the count for the key
+        counts[key] = (counts[key] as number || 0) + 1;
     }
 }
+
 
 /**
  * Reshapes data for chart outputs.
@@ -158,7 +176,7 @@ function incrementCounts(counts, key, subKey = null) {
  * @param {Object} campaignCounts - Counts of campaign IDs.
  * @returns {Object} - Reshaped data for charting.
  */
-function reshapeChartData(pathCounts, ipCounts, campaignCounts) {
+function reshapeChartData(pathCounts: { [key: string]: { [key: string]: number } }, ipCounts: { [key: string]: { [key: string]: number } }, campaignCounts: { [key: string]: { [key: string]: number } }) {
     return {
         pathCounts: reshapeData(pathCounts),
         ipCounts: reshapeData(ipCounts, 'ip'),
@@ -172,7 +190,7 @@ function reshapeChartData(pathCounts, ipCounts, campaignCounts) {
  * @param {String} [keyName='path'] - The key name for the reshaped data.
  * @returns {Array} - An array of data suitable for charting.
  */
-function reshapeData(data, keyName = 'path') {
+function reshapeData(data: { [key: string]: { [key: string]: number } }, keyName: string = 'path') {
     return Object.keys(data).map(key => ({
         [keyName]: key,
         counts: Object.entries(data[key]).map(([date, count]) => ({ date, count }))
@@ -185,8 +203,8 @@ function reshapeData(data, keyName = 'path') {
  * @param {WebSocket.Server} wss - The WebSocket server instance.
  * @returns {Promise<Object>} - The saved tracking data.
  */
-async function saveAndBroadcastTrackingData(req, wss, formData = null) {
-    const geo = geoip.lookup(req.ip) || {};
+async function saveAndBroadcastTrackingData(req: Request, wss: WebSocket.Server, formData: any = null) {
+    const geo = geoip.lookup(req.ip as string) || {} as any;
     let requestIP = req.ip;
 
     if (process.env.ANONYMIZE_IPS === 'true') {
@@ -201,10 +219,10 @@ async function saveAndBroadcastTrackingData(req, wss, formData = null) {
         path: req.path,
         decay: Date.now(),
         useragent: {
-            browser: req.useragent.browser,
-            version: req.useragent.version,
-            device: req.useragent.isMobile ? 'mobile' : 'desktop',
-            os: req.useragent.os,
+            browser: req.useragent?.browser,
+            version: req.useragent?.version,
+            device: req.useragent?.isMobile ? 'mobile' : 'desktop',
+            os: req.useragent?.os,
         },
         language: req.acceptsLanguages(),
         geo: {
@@ -242,9 +260,9 @@ async function saveAndBroadcastTrackingData(req, wss, formData = null) {
  * @param {Object} res - The HTTP response object.
  * @param {Object} trackingData - The tracking data.
  */
-function handleTrackingResponse(req, res, trackingData) {
+function handleTrackingResponse(req: Request, res: Response, trackingData: any) {
     if (req.path === '/click.gif' && req.query.redirectURL) {
-        return res.redirect(req.query.redirectURL);
+        return res.redirect(req.query.redirectURL as string);
     }
 
     if (!req.headers.referer) {
@@ -258,7 +276,7 @@ function handleTrackingResponse(req, res, trackingData) {
  * Sends a 1x1 pixel response.
  * @param {Object} res - The HTTP response object.
  */
-function sendPixelResponse(res) {
+function sendPixelResponse(res: Response) {
     const pixel = Buffer.from(
         'R0lGODlhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=',
         'base64'
@@ -278,7 +296,7 @@ function sendPixelResponse(res) {
  * @param {Object} trackingData - The tracking data object.
  * @returns {String} - The HTML string representing the tracking data.
  */
-function generateReadableTrackingData(trackingData, indentLevel = 0) {
+function generateReadableTrackingData(trackingData: any, indentLevel: number = 0): string {
     return Object.entries(trackingData).map(([key, value]) => {
         const indent = '&nbsp;'.repeat(indentLevel * 4); // 4 spaces per indent level
         if (typeof value === 'object' && value !== null) {
@@ -296,7 +314,7 @@ function generateReadableTrackingData(trackingData, indentLevel = 0) {
  * @param {Object} trackingData - The tracking data.
  * @returns {String} - The HTML content for the tracking UI.
  */
-function generateTrackingUI(trackingData) {
+function generateTrackingUI(trackingData: any): string {
     const readableTrackingData = generateReadableTrackingData(trackingData);
     const headContent = `
         <meta charset="UTF-8">
@@ -359,7 +377,7 @@ function generateTrackingUI(trackingData) {
  * Generates the content for the information block in the UI.
  * @returns {String} - HTML content for the information block.
  */
-function generateInfoBlockContent() {
+function generateInfoBlockContent(): string {
     return `
     <h2>What Is NanoTrack?</h2>
     <p>In an era where digital privacy is paramount, NanoTrack emerges as a cutting-edge analytics tool, meticulously designed to balance the critical need for comprehensive website traffic insights with the utmost respect for user privacy.</p>

@@ -1,17 +1,21 @@
 "use strict";
-const express = require('express');
-const geoip = require('geoip-lite');
-const TrackingData = require('../models/TrackingData');
-const WebSocket = require('ws');
-module.exports = function (wss) {
-    const router = express.Router();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const geoip_lite_1 = __importDefault(require("geoip-lite"));
+const TrackingData_1 = __importDefault(require("../models/TrackingData"));
+const ws_1 = __importDefault(require("ws"));
+function default_1(wss) {
+    const router = express_1.default.Router();
     // Endpoint to retrieve paginated tracking data
     router.get('/api/tracking-data', isAuthenticated, async (req, res) => {
         try {
             const page = parseInt(req.query.page, 10) || 1;
             const limit = parseInt(req.query.limit, 10) || 10;
             const skip = (page - 1) * limit;
-            const data = await TrackingData.find({});
+            const data = await TrackingData_1.default.find({});
             const total = data.length;
             const paginatedData = data.reverse().slice(skip, skip + limit);
             res.json({
@@ -29,8 +33,10 @@ module.exports = function (wss) {
     // Endpoint to retrieve data for charts
     router.get('/api/chart-data', isAuthenticated, async (req, res) => {
         try {
-            const allTrackingData = await TrackingData.find({});
-            const pathCounts = {}, ipCounts = {}, campaignCounts = {};
+            const allTrackingData = await TrackingData_1.default.find({});
+            const pathCounts = {};
+            const ipCounts = {};
+            const campaignCounts = {};
             allTrackingData.forEach(item => {
                 const { path = 'Unknown', decay, geo = {}, campaignID = 'Unknown' } = item;
                 const date = new Date(decay).toLocaleDateString();
@@ -50,7 +56,7 @@ module.exports = function (wss) {
     router.get('/api/campaign/:campaignId', isAuthenticated, async (req, res) => {
         try {
             const { campaignId } = req.params;
-            const campaignData = await TrackingData.find({ campaignID: campaignId });
+            const campaignData = await TrackingData_1.default.find({ campaignID: campaignId });
             if (!campaignData.length) {
                 return res.status(404).json({ message: "Campaign not found" });
             }
@@ -65,7 +71,7 @@ module.exports = function (wss) {
     router.delete('/api/campaign/:campaignID', isAuthenticated, async (req, res) => {
         try {
             const { campaignID } = req.params;
-            await TrackingData.deleteMany({ campaignID });
+            await TrackingData_1.default.deleteMany({ campaignID });
             res.status(200).json({ message: 'Campaign deleted successfully' });
         }
         catch (err) {
@@ -101,13 +107,15 @@ module.exports = function (wss) {
         }
     });
     return router;
-};
+}
+exports.default = default_1;
+;
 // Helper Functions
 function isRemoteUrl(url) {
     return url.startsWith('http://') || url.startsWith('https://');
 }
 function getFilenameFromUrl(url) {
-    return url.split('/').pop();
+    return url.split('/').pop() || '';
 }
 // Middleware to validate campaignID in the request
 const validateCampaignID = (req, res, next) => {
@@ -130,10 +138,24 @@ const isAuthenticated = (req, res, next) => {
  */
 function incrementCounts(counts, key, subKey = null) {
     if (subKey) {
-        counts[key] = counts[key] || {};
-        counts[key][subKey] = (counts[key][subKey] || 0) + 1;
+        // Ensure the nested structure exists
+        if (typeof counts[key] !== 'object') {
+            counts[key] = {};
+        }
+        // Now TypeScript knows counts[key] is an object due to the above check
+        const subCounts = counts[key];
+        // Increment the count for the subKey
+        subCounts[subKey] = (subCounts[subKey] || 0) + 1;
     }
     else {
+        // When there's no subKey, work directly with counts[key] as a number
+        // This requires telling TypeScript counts[key] can be a number in this case
+        if (typeof counts[key] === 'object') {
+            // Handle error or convert object to number if it makes sense in your context
+            console.error('Expected a number, found an object. This key should not have subkeys.');
+            return;
+        }
+        // Increment or initialize the count for the key
         counts[key] = (counts[key] || 0) + 1;
     }
 }
@@ -170,7 +192,8 @@ function reshapeData(data, keyName = 'path') {
  * @returns {Promise<Object>} - The saved tracking data.
  */
 async function saveAndBroadcastTrackingData(req, wss, formData = null) {
-    const geo = geoip.lookup(req.ip) || {};
+    var _a, _b, _c, _d;
+    const geo = geoip_lite_1.default.lookup(req.ip) || {};
     let requestIP = req.ip;
     if (process.env.ANONYMIZE_IPS === 'true') {
         requestIP = '';
@@ -183,10 +206,10 @@ async function saveAndBroadcastTrackingData(req, wss, formData = null) {
         path: req.path,
         decay: Date.now(),
         useragent: {
-            browser: req.useragent.browser,
-            version: req.useragent.version,
-            device: req.useragent.isMobile ? 'mobile' : 'desktop',
-            os: req.useragent.os,
+            browser: (_a = req.useragent) === null || _a === void 0 ? void 0 : _a.browser,
+            version: (_b = req.useragent) === null || _b === void 0 ? void 0 : _b.version,
+            device: ((_c = req.useragent) === null || _c === void 0 ? void 0 : _c.isMobile) ? 'mobile' : 'desktop',
+            os: (_d = req.useragent) === null || _d === void 0 ? void 0 : _d.os,
         },
         language: req.acceptsLanguages(),
         geo: {
@@ -204,9 +227,9 @@ async function saveAndBroadcastTrackingData(req, wss, formData = null) {
         trackingData.params = formData;
     }
     if (req.headers['dnt'] !== '1') {
-        await TrackingData.save(trackingData);
+        await TrackingData_1.default.save(trackingData);
         wss.clients.forEach(client => {
-            if (client.readyState === WebSocket.OPEN) {
+            if (client.readyState === ws_1.default.OPEN) {
                 client.send(JSON.stringify(trackingData));
             }
         });

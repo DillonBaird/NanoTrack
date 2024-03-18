@@ -8,6 +8,7 @@ import useragent from 'express-useragent';
 import nocache from 'nocache';
 // import minifyHTML from 'express-minify-html';
 import { dbConnect } from './db';
+import createTrackingRouter from './routes/tracking';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -109,7 +110,7 @@ function configureRoutes(app: Application, wsServer: WebSocket.Server): void {
     });
 
     // Tracking Routes
-    const trackingRouter = require('./routes/tracking')(wsServer);
+    const trackingRouter = createTrackingRouter(wsServer);
     app.use('/track', trackingRouter);
 }
 

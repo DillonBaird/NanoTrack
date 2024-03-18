@@ -14,6 +14,7 @@ const express_useragent_1 = __importDefault(require("express-useragent"));
 const nocache_1 = __importDefault(require("nocache"));
 // import minifyHTML from 'express-minify-html';
 const db_1 = require("./db");
+const tracking_1 = __importDefault(require("./routes/tracking"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -99,7 +100,7 @@ function configureRoutes(app, wsServer) {
         res.redirect('/login');
     });
     // Tracking Routes
-    const trackingRouter = require('./routes/tracking')(wsServer);
+    const trackingRouter = (0, tracking_1.default)(wsServer);
     app.use('/track', trackingRouter);
 }
 // Middleware to check if user is authenticated
