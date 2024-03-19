@@ -42,6 +42,7 @@ function configureMiddleware(app: Application): void {
     app.use(useragent.express());
     app.use(nocache());
     app.set('etag', false);
+    app.set('trust proxy', true);
 }
 
 function configureWebSocketServer(wsServer: WebSocket.Server): void {
