@@ -70,6 +70,17 @@ NanoTrack is currently in an **early-release beta** phase. This is an exciting s
 
 I'm excited to have you aboard during this pivotal phase of NanoTrack's development and look forward to growing together!
 
+---
+## ⚠️ Important Note for Safari Users
+
+Safari, by default, disables cross-site tracking. This privacy feature significantly impacts how referring URLs are captured and recorded by NanoTrack. Specifically, when cross-site tracking is disabled, NanoTrack will only be able to capture the host domain of the referrer, not the full referring URL.
+
+### Implications for Tracking:
+
+- **Limited Referrer Data**: Users visiting from Safari with the default settings will result in NanoTrack capturing limited referrer information, potentially impacting detailed analytics and insights.
+- **Campaign Strategy Adjustment**: If capturing the full referrer URL is critical for your analytics, you may need to consider creating separate campaigns for each page you wish to track. This approach ensures that you can still obtain detailed referrer data without relying on the full URL being passed by the browser.
+---
+
 ## 📖 Table of Contents
 - [📊 NanoTrack: 1x1 Nano-Size Spy-Pixel Analytics](#-nanotrack-1x1-nano-size-spy-pixel-analytics)
   - [🌟 Introduction](#-introduction)
@@ -82,6 +93,8 @@ I'm excited to have you aboard during this pivotal phase of NanoTrack's developm
     - [Expect Continuous Improvements](#expect-continuous-improvements)
     - [Your Feedback Matters](#your-feedback-matters)
     - [A Note of Caution](#a-note-of-caution)
+  - [⚠️ Important Note for Safari Users](#️-important-note-for-safari-users)
+    - [Implications for Tracking:](#implications-for-tracking)
   - [📖 Table of Contents](#-table-of-contents)
   - [🚀 Getting Started](#-getting-started)
     - [Self-Hosting](#self-hosting)

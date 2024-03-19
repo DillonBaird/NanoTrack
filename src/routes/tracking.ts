@@ -222,7 +222,7 @@ async function saveAndBroadcastTrackingData(req: Request, wss: WebSocket.Server,
 
     const trackingInfo = {
         host: req.get('host'),
-        referer: req.get('referer') || '',
+        referrer: req.get('referrer') || '',
         params: req.query,
         path: req.path,
         decay: Date.now(),
@@ -274,27 +274,20 @@ function handleTrackingResponse(req: Request, res: Response, trackingData: any) 
         return res.redirect(req.query.redirectURL as string);
     }
 
-    if (!req.headers.referer) {
+    if (!req.get('referrer')) {
         res.send(generateTrackingUI(trackingData));
     } else {
-        sendPixelResponse(res);
+        const pixel = Buffer.from(
+            'R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
+            'base64'
+        );
+        res.setHeader('Content-Type', 'image/gif');
+        res.setHeader('Content-Length', pixel.length.toString());
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        res.end(pixel);
     }
-}
-
-/**
- * Sends a 1x1 pixel response.
- * @param {Object} res - The HTTP response object.
- */
-function sendPixelResponse(res: Response) {
-    const pixel = Buffer.from(
-        'R0lGODlhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=',
-        'base64'
-    );
-    res.writeHead(200, {
-        'Content-Type': 'image/gif',
-        'Content-Length': pixel.length,
-    });
-    res.end(pixel);
 }
 
 /**
