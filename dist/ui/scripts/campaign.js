@@ -815,7 +815,7 @@ function populateList(containerId, counts, header1, header2, dataType) {
             gradientEnd = 100;
         }
         const tailwindGradientClass = `bg-gradient-to-r from-blue-100 dark:from-gray-600 from-${Math.ceil(gradientStart / 5) * 5}% to-white dark:to-gray-900 to-${Math.ceil(gradientEnd / 5) * 5}%`; //`from-blue-gray-400 from-10% via-blue-gray-400 to-white`
-        tableContent += `<tr><td class="capitalize">${displayKey}</td><td class="${tailwindGradientClass}"><strong>${value}</strong> | ${percentage}%</td></tr>`;
+        tableContent += `<tr><td class="">${displayKey}</td><td class="${tailwindGradientClass}"><strong>${value}</strong> | ${percentage}%</td></tr>`;
     }
     tableContent += '</tbody></table>';
     container.innerHTML = tableContent;
