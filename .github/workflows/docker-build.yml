@@ -16,6 +16,10 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
+    - name: Get version from package.json
+      id: package_version
+      run: echo "::set-output name=VERSION::$(jq -r '.version' package.json)"
+
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
@@ -26,7 +30,9 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: nanotrack/nanotrack:latest  # Replace with your Docker Hub username and image repository
+        tags: |
+          nanotrack/nanotrack:${{ steps.package_version.outputs.VERSION }}
+          nanotrack/nanotrack:latest
 
     - name: Logout from Docker Hub
       run: docker logout
