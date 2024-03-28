@@ -1,20 +1,27 @@
 version: 2
 updates:
-  # Enable version updates for npm
+  # NPM updates
   - package-ecosystem: "npm"
-    # Look for `package.json` and `package-lock.json` files in the `root` directory
     directory: "/"
-    # Check the npm registry for updates every day (you can also use "weekly" or "monthly")
     schedule:
-      interval: "weekly"
-
-  # Additional customization
-    # Assign reviewers to pull requests for version updates
+      interval: "daily"
+    target-branch: "dev"
     reviewers:
       - "DillonBaird"
-    # Limit the number of open pull requests Dependabot will create
     open-pull-requests-limit: 10
-    # Configure commit message
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Docker updates
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "dev"
+    reviewers:
+      - "DillonBaird"
+    open-pull-requests-limit: 10
     commit-message:
       prefix: "chore"
       include: "scope"
