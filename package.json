@@ -1,6 +1,6 @@
 {
     "name": "nanotrack",
-    "version": "1.0.0-beta",
+    "version": "1.0.1-beta",
     "description": "1x1 Nano-Size Spy-Pixel Analytics",
     "main": "dist/server.js",
     "scripts": {
