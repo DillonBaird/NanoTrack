@@ -33,7 +33,7 @@
         "ws": "^8.17.0"
     },
     "devDependencies": {
-        "@babel/cli": "^7.24.1",
+        "@babel/cli": "^7.24.7",
         "@babel/core": "^7.24.7",
         "@babel/preset-env": "^7.24.4",
         "@types/cookie-parser": "^1.4.7",
