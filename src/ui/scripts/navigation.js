@@ -35,7 +35,7 @@ function createFooter() {
         <div class="custom-bg py-0">
             <div class="container mx-auto text-center text-white text-xs">
                 <div>
-                    <a href="https://github.com/DillonBaird/NanoTrack" target="_blank" class="text-white font-bold">NanoTrack v1.0</a> - Made with ❤️ by <a href="https://DillonBaird.io" target="_blank" class="text-white font-bold">Dillon Baird</a>
+                    <a href="https://github.com/DillonBaird/NanoTrack" target="_blank" class="text-white font-bold">NanoTrack v1.0.1-beta</a> - Made with ❤️ by <a href="https://DillonBaird.io" target="_blank" class="text-white font-bold">Dillon Baird</a>
                 </div>
             </div>
         </div>
