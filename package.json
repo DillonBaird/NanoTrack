@@ -27,7 +27,7 @@
         "express-useragent": "^1.0.15",
         "fs": "^0.0.1-security",
         "geoip-lite": "^1.4.10",
-        "mongoose": "^8.4.1",
+        "mongoose": "^8.5.1",
         "nocache": "^4.0.0",
         "node-fetch": "^3.3.2",
         "ws": "^8.18.0"
